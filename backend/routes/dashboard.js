@@ -3,6 +3,9 @@ const router = express.Router();
 const db = require('../config/db');
 const { authenticate } = require('../middleware/auth');
 
+const daysUntil = (date, now = new Date()) => Math.ceil((new Date(date) - now) / (1000 * 60 * 60 * 24));
+const alertLevel = (days) => (days < 0 ? 'critical' : 'warning');
+
 router.get('/', authenticate, async (req, res) => {
   try {
     const [settings] = await db.query('SELECT expiration_alert_days FROM system_settings LIMIT 1');
@@ -13,54 +16,42 @@ router.get('/', authenticate, async (req, res) => {
     const [cancelledCertificates] = await db.query("SELECT COUNT(*) as count FROM certificates WHERE status = 'cancelado'");
     const [totalClients] = await db.query('SELECT COUNT(*) as count FROM clients');
     const [totalEquipment] = await db.query('SELECT COUNT(*) as count FROM equipment');
-    const [totalCranes] = await db.query("SELECT COUNT(*) as count FROM equipment WHERE type = 'guindaste' OR type = 'grua' OR type = 'ponte_rolante'");
-
-    const now = new Date();
-
-    const [allCerts] = await db.query(`
-      SELECT c.status, c.expiration_date
-      FROM certificates c
+    const [totalCranes] = await db.query("SELECT COUNT(*) as count FROM equipment WHERE LOWER(type) LIKE '%guindaste%' OR LOWER(type) LIKE '%munck%' OR LOWER(type) LIKE '%ponte%'");
+    const [activeProjects] = await db.query("SELECT COUNT(*) as count FROM projects WHERE status = 'em_andamento' OR status = 'planejada'");
+    const [auditLogs] = await db.query(`
+      SELECT al.*, u.name as user_name
+      FROM audit_logs al
+      LEFT JOIN users u ON al.user_id = u.id
+      ORDER BY al.created_at DESC
+      LIMIT 20
     `);
 
+    const now = new Date();
+    const [allCerts] = await db.query('SELECT status, expiration_date FROM certificates');
     let validCertificates = 0;
     let expiringCertificates = 0;
     let expiredCertificates = 0;
 
     for (const cert of allCerts) {
       if (cert.status === 'cancelado') continue;
-      const expDate = new Date(cert.expiration_date);
-      const daysUntil = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-      if (daysUntil < 0) {
-        expiredCertificates++;
-      } else if (daysUntil <= alertDays) {
-        expiringCertificates++;
-      } else {
-        validCertificates++;
-      }
+      const days = daysUntil(cert.expiration_date, now);
+      if (days < 0) expiredCertificates++;
+      else if (days <= alertDays) expiringCertificates++;
+      else validCertificates++;
     }
 
-    const [asoResults] = await db.query(`
-      SELECT next_exam_date FROM medical_exams WHERE next_exam_date IS NOT NULL
-    `);
-    let expiredASO = 0;
-    for (const aso of asoResults) {
-      const examDate = new Date(aso.next_exam_date);
-      if (examDate < now) expiredASO++;
-    }
+    const [asoResults] = await db.query('SELECT expiration_date FROM medical_exams WHERE expiration_date IS NOT NULL');
+    const expiredASO = asoResults.filter((aso) => daysUntil(aso.expiration_date, now) < 0).length;
 
     const [laudoResults] = await db.query(`
-      SELECT expiration_date FROM equipment_documents WHERE expiration_date IS NOT NULL AND document_type = 'laudo'
+      SELECT expiration_date
+      FROM equipment_documents
+      WHERE expiration_date IS NOT NULL
+        AND (LOWER(document_type) LIKE '%laudo%' OR LOWER(title) LIKE '%laudo%')
     `);
-    let expiredLaudos = 0;
-    for (const laudo of laudoResults) {
-      const expDate = new Date(laudo.expiration_date);
-      if (expDate < now) expiredLaudos++;
-    }
-
-    const [activeProjects] = await db.query("SELECT COUNT(*) as count FROM projects WHERE status = 'ativo' OR status = 'em_andamento'");
+    const expiredLaudos = laudoResults.filter((laudo) => daysUntil(laudo.expiration_date, now) < 0).length;
 
     const alerts = [];
-
     const [expiringCerts] = await db.query(`
       SELECT c.id, c.certificate_code, c.expiration_date, e.full_name as employee_name, t.name as training_name
       FROM certificates c
@@ -68,29 +59,40 @@ router.get('/', authenticate, async (req, res) => {
       LEFT JOIN trainings t ON c.training_id = t.id
       WHERE c.status != 'cancelado'
     `);
+
     for (const cert of expiringCerts) {
-      const expDate = new Date(cert.expiration_date);
-      const daysUntil = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-      if (daysUntil < 0) {
-        alerts.push({ type: 'certificado_vencido', severity: 'danger', message: `Certificado ${cert.certificate_code} de ${cert.employee_name} (${cert.training_name}) está vencido há ${Math.abs(daysUntil)} dias`, entity_id: cert.id });
-      } else if (daysUntil <= alertDays) {
-        alerts.push({ type: 'certificado_vencendo', severity: 'warning', message: `Certificado ${cert.certificate_code} de ${cert.employee_name} (${cert.training_name}) vence em ${daysUntil} dias`, entity_id: cert.id });
+      const days = daysUntil(cert.expiration_date, now);
+      if (days < 0 || days <= alertDays) {
+        alerts.push({
+          type: days < 0 ? 'Certificado vencido' : 'Certificado a vencer',
+          level: alertLevel(days),
+          msg: days < 0
+            ? `Certificado ${cert.certificate_code} de ${cert.employee_name} (${cert.training_name}) vencido ha ${Math.abs(days)} dias`
+            : `Certificado ${cert.certificate_code} de ${cert.employee_name} (${cert.training_name}) vence em ${days} dias`,
+          entity_id: cert.id
+        });
       }
     }
 
     for (const aso of asoResults) {
-      const examDate = new Date(aso.next_exam_date);
-      const daysUntil = Math.ceil((examDate - now) / (1000 * 60 * 60 * 24));
-      if (daysUntil < 0) {
-        alerts.push({ type: 'aso_vencido', severity: 'danger', message: `ASO vencido há ${Math.abs(daysUntil)} dias` });
+      const days = daysUntil(aso.expiration_date, now);
+      if (days < 0 || days <= alertDays) {
+        alerts.push({
+          type: days < 0 ? 'ASO vencido' : 'ASO a vencer',
+          level: alertLevel(days),
+          msg: days < 0 ? `ASO vencido ha ${Math.abs(days)} dias` : `ASO vence em ${days} dias`
+        });
       }
     }
 
     for (const laudo of laudoResults) {
-      const expDate = new Date(laudo.expiration_date);
-      const daysUntil = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-      if (daysUntil < 0) {
-        alerts.push({ type: 'laudo_vencido', severity: 'danger', message: `Laudo vencido há ${Math.abs(daysUntil)} dias` });
+      const days = daysUntil(laudo.expiration_date, now);
+      if (days < 0 || days <= alertDays) {
+        alerts.push({
+          type: days < 0 ? 'Laudo vencido' : 'Laudo a vencer',
+          level: alertLevel(days),
+          msg: days < 0 ? `Laudo vencido ha ${Math.abs(days)} dias` : `Laudo vence em ${days} dias`
+        });
       }
     }
 
@@ -107,6 +109,7 @@ router.get('/', authenticate, async (req, res) => {
       totalCertificates: totalCertificates[0].count,
       cancelledCertificates: cancelledCertificates[0].count,
       totalClients: totalClients[0].count,
+      audit_logs: auditLogs,
       alerts
     });
   } catch (error) {

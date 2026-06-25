@@ -96,22 +96,36 @@ router.get('/', authenticate, async (req, res) => {
       }
     }
 
-    res.json({
+    const metrics = {
       activeEmployees: activeEmployees[0].count,
+      active_employees: activeEmployees[0].count,
       validCertificates,
+      valid_certificates: validCertificates,
       expiringCertificates,
+      expiring_certificates: expiringCertificates,
       expiredCertificates,
+      expired_certificates: expiredCertificates,
       expiredASO,
+      expired_aso: expiredASO,
       totalEquipment: totalEquipment[0].count,
+      total_equipment: totalEquipment[0].count,
       totalCranes: totalCranes[0].count,
+      total_cranes: totalCranes[0].count,
       expiredLaudos,
+      expired_laudos: expiredLaudos,
       activeProjects: activeProjects[0].count,
+      active_projects: activeProjects[0].count,
       totalCertificates: totalCertificates[0].count,
+      total_certificates: totalCertificates[0].count,
       cancelledCertificates: cancelledCertificates[0].count,
+      cancelled_certificates: cancelledCertificates[0].count,
       totalClients: totalClients[0].count,
+      total_clients: totalClients[0].count,
       audit_logs: auditLogs,
       alerts
-    });
+    };
+
+    res.json(metrics);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao buscar dados do dashboard' });

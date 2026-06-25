@@ -5,9 +5,24 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const frontendDir = path.join(__dirname, '../frontend');
+const indexFile = path.join(frontendDir, 'index.html');
+
+function sendFrontendApp(req, res, next) {
+  fs.readFile(indexFile, 'utf8', (err, html) => {
+    if (err) return next(err);
+
+    const enhancedHtml = html
+      .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n</head>')
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n</body>');
+
+    res.type('html').send(enhancedHtml);
+  });
+}
 
 // Security middleware
 app.use(helmet());
@@ -35,7 +50,8 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.get('/', sendFrontendApp);
+app.use(express.static(frontendDir, { index: false }));
 
 // API Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -62,16 +78,17 @@ app.get('/api/health', (req, res) => {
 });
 
 // SPA fallback - serve index.html for all non-API routes
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
   if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    return sendFrontendApp(req, res, next);
   }
+  next();
 });
 
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Erro interno do servidor',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });

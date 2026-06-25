@@ -2,7 +2,9 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = process.env.UPLOAD_DIR || './uploads';
+const uploadDir = process.env.UPLOAD_DIR
+  ? path.resolve(process.env.UPLOAD_DIR)
+  : path.join(__dirname, '..', 'uploads');
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -26,7 +28,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     return cb(null, true);
   }
-  cb(new Error('Tipo de arquivo não permitido. Aceitos: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX'));
+  cb(new Error('Tipo de arquivo nao permitido. Aceitos: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX'));
 };
 
 const upload = multer({

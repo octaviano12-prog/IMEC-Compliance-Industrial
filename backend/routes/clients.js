@@ -15,7 +15,7 @@ router.get('/', authenticate, async (req, res) => {
 router.get('/:id', authenticate, async (req, res) => {
   try {
     const [clients] = await db.query('SELECT * FROM clients WHERE id = ?', [req.params.id]);
-    if (clients.length === 0) return res.status(404).json({ error: 'Cliente não encontrado' });
+    if (clients.length === 0) return res.status(404).json({ error: 'Cliente nao encontrado' });
     res.json(clients[0]);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar cliente' });
@@ -24,10 +24,10 @@ router.get('/:id', authenticate, async (req, res) => {
 
 router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { name, cnpj, contact_name, phone, email, address, status, notes } = req.body;
+    const { name, cnpj, contact_name, phone, email, address, city, state, notes } = req.body;
     const [result] = await db.query(
-      'INSERT INTO clients (name, cnpj, contact_name, phone, email, address, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [name, cnpj, contact_name, phone, email, address, status || 'ativo', notes]
+      'INSERT INTO clients (name, cnpj, contact_name, phone, email, address, city, state, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, cnpj, contact_name, phone, email, address, city, state, notes]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'create', 'client', result.insertId, `Cliente ${name} cadastrado`]);
@@ -40,10 +40,10 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
 
 router.put('/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { name, cnpj, contact_name, phone, email, address, status, notes } = req.body;
+    const { name, cnpj, contact_name, phone, email, address, city, state, notes } = req.body;
     await db.query(
-      'UPDATE clients SET name=?, cnpj=?, contact_name=?, phone=?, email=?, address=?, status=?, notes=? WHERE id=?',
-      [name, cnpj, contact_name, phone, email, address, status, notes, req.params.id]
+      'UPDATE clients SET name=?, cnpj=?, contact_name=?, phone=?, email=?, address=?, city=?, state=?, notes=? WHERE id=?',
+      [name, cnpj, contact_name, phone, email, address, city, state, notes, req.params.id]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'update', 'client', req.params.id, `Cliente ${name} atualizado`]);
@@ -58,7 +58,7 @@ router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
     const [client] = await db.query('SELECT name FROM clients WHERE id = ?', [req.params.id]);
     await db.query('DELETE FROM clients WHERE id = ?', [req.params.id]);
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
-      [req.user.id, 'delete', 'client', req.params.id, `Cliente ${client[0]?.name} excluído`]);
+      [req.user.id, 'delete', 'client', req.params.id, `Cliente ${client[0]?.name} excluido`]);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao excluir cliente' });

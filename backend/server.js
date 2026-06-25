@@ -6,19 +6,29 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
+const db = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const frontendDir = path.join(__dirname, '../frontend');
 const indexFile = path.join(frontendDir, 'index.html');
 
+async function applyCompatibilityMigrations() {
+  try {
+    await db.query('ALTER TABLE employees MODIFY photo_url MEDIUMTEXT');
+    await db.query('ALTER TABLE equipment MODIFY photo_url MEDIUMTEXT');
+  } catch (err) {
+    console.warn('Compatibilidade do banco nao aplicada:', err.message);
+  }
+}
+
 function sendFrontendApp(req, res, next) {
   fs.readFile(indexFile, 'utf8', (err, html) => {
     if (err) return next(err);
 
     const enhancedHtml = html
-      .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n<link rel="stylesheet" href="/nr-idcards.css">\n</head>')
-      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n</body>');
+      .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n</head>')
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n</body>');
 
     res.type('html').send(enhancedHtml);
   });
@@ -35,7 +45,7 @@ app.use(cors({
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
-  message: 'Muitas requisições, tente novamente mais tarde'
+  message: 'Muitas requisicoes, tente novamente mais tarde'
 });
 app.use(limiter);
 
@@ -96,12 +106,14 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Rota não encontrada' });
+  res.status(404).json({ error: 'Rota nao encontrada' });
 });
 
+applyCompatibilityMigrations();
+
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 IMEC Compliance Industrial API running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`IMEC Compliance Industrial API running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -32,9 +32,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'E-mail ou senha inválidos' });
     }
 
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ error: 'JWT_SECRET nao configurado no servidor' });
+    }
+
     const token = jwt.sign(
       { id: user.id, name: user.name, email: user.email, role: user.role, client_id: user.client_id },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 

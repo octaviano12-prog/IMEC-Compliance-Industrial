@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const { authenticate, authorize } = require('../middleware/auth');
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -55,7 +56,7 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/register (admin only)
-router.post('/register', async (req, res) => {
+router.post('/register', authenticate, authorize('admin'), async (req, res) => {
   try {
     const { name, email, password, role, client_id } = req.body;
     

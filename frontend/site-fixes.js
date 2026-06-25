@@ -113,31 +113,22 @@
     return true;
   }
 
-  function patchApiDashboard() {
-    if (!window.API || !window.API.dashboard || typeof window.API.dashboard.get !== 'function' || window.API.dashboard.get.__imecSiteFixes) return false;
+  function boot(attempt) {
+    if (!patchRefreshData() && attempt < 20) {
+      setTimeout(function () { boot(attempt + 1); }, 100);
+      return;
+    }
 
-    var originalGetDashboard = window.API.dashboard.get;
-    window.API.dashboard.get = async function () {
-      var dashboard = await originalGetDashboard.apply(this, arguments);
-      return normalizeDashboard(dashboard);
-    };
-    window.API.dashboard.get.__imecSiteFixes = true;
-
-    return true;
-  }
-
-  function boot() {
-    var patchedRefresh = patchRefreshData();
-    var patchedDashboard = patchApiDashboard();
-
-    if (!patchedRefresh || !patchedDashboard) {
-      setTimeout(boot, 100);
+    try {
+      if (typeof window.getDB === 'function') normalizeDashboard(window.getDB().dashboard);
+    } catch (err) {
+      console.warn('[IMEC] Falha ao normalizar dashboard', err);
     }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
+    document.addEventListener('DOMContentLoaded', function () { boot(0); });
   } else {
-    boot();
+    boot(0);
   }
 })();

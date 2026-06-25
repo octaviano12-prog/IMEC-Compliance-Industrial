@@ -1,0 +1,21 @@
+# IMEC Compliance Industrial - Hostinger / Apache
+
+# Evita erro 403 quando o projeto inteiro é enviado para public_html
+DirectoryIndex index.html frontend/index.html
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Se acessar a raiz do domínio, abre o frontend
+  RewriteRule ^$ frontend/index.html [L]
+
+  # Mantém arquivos reais funcionando normalmente
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Rotas do frontend em modo SPA/hash fallback
+  RewriteRule ^frontend/?$ frontend/index.html [L]
+</IfModule>

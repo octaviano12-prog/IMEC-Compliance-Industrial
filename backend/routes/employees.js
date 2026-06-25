@@ -24,10 +24,10 @@ router.get('/:id', authenticate, async (req, res) => {
 
 router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes } = req.body;
+    const { full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes, photo_url } = req.body;
     const [result] = await db.query(
-      'INSERT INTO employees (full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status || 'ativo', notes]
+      'INSERT INTO employees (full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status || 'ativo', notes, photo_url]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'create', 'employee', result.insertId, `Funcionário ${full_name} cadastrado`]);
@@ -40,10 +40,10 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
 
 router.put('/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes } = req.body;
+    const { full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes, photo_url } = req.body;
     await db.query(
-      'UPDATE employees SET full_name=?, cpf=?, rg=?, birth_date=?, phone=?, email=?, address=?, role_position=?, department=?, admission_date=?, status=?, notes=? WHERE id=?',
-      [full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes, req.params.id]
+      'UPDATE employees SET full_name=?, cpf=?, rg=?, birth_date=?, phone=?, email=?, address=?, role_position=?, department=?, admission_date=?, status=?, notes=?, photo_url=? WHERE id=?',
+      [full_name, cpf, rg, birth_date, phone, email, address, role_position, department, admission_date, status, notes, photo_url, req.params.id]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'update', 'employee', req.params.id, `Funcionário ${full_name} atualizado`]);

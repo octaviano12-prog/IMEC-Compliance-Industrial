@@ -126,10 +126,19 @@
   };
 
   function renderQrCodes() {
-    if (typeof QRCode === 'undefined') return;
     document.querySelectorAll('[data-nr-qr]').forEach(function (box) {
       if (box.dataset.done) return;
       box.dataset.done = '1';
+      if (typeof QRCode === 'undefined') {
+        var img = document.createElement('img');
+        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=138x138&margin=1&data=' + encodeURIComponent(box.dataset.nrQr || location.href);
+        img.alt = 'QR Code de autenticidade';
+        img.width = 138;
+        img.height = 138;
+        box.innerHTML = '';
+        box.appendChild(img);
+        return;
+      }
       QRCode.toCanvas(box.dataset.nrQr, { width: 138, margin: 1, color: { dark: '#030712', light: '#ffffff' } }, function (err, canvas) {
         if (!err) {
           box.innerHTML = '';

@@ -15,7 +15,7 @@ router.get('/', authenticate, authorize('admin'), async (req, res) => {
 router.post('/', authenticate, authorize('admin'), async (req, res) => {
   try {
     const { name, email, password, role, client_id } = req.body;
-    const bcrypt = require('bcrypt');
+    const bcrypt = require('bcryptjs');
     const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await db.query(
       'INSERT INTO users (name, email, password, role, client_id) VALUES (?, ?, ?, ?, ?)',

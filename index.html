@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMEC Compliance Industrial</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{colors:{
+'imec-dark':'#0B2D5B','imec-blue':'#145DA0','imec-red':'#D92525',
+'imec-gray':'#F4F6F8','imec-green':'#1E9E55','imec-orange':'#F59E0B',
+'imec-navy':'#091F3E','imec-light':'#E8EDF3'
+},fontFamily:{'display':['Outfit','sans-serif'],'body':['DM Sans','sans-serif']}}}}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#f1f1f1;border-radius:3px}
+::-webkit-scrollbar-thumb{background:#145DA0;border-radius:3px}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:10px 20px;color:#94a3b8;font-size:14px;font-weight:500;border-radius:8px;margin:2px 12px;transition:all .2s;cursor:pointer;text-decoration:none}
+.sidebar-link:hover{background:rgba(255,255,255,.08);color:#e2e8f0}
+.sidebar-link.active{background:linear-gradient(135deg,#145DA0,#0B6FE8);color:#fff;box-shadow:0 4px 12px rgba(20,93,160,.3)}
+.sidebar-section{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#475569;padding:16px 24px 6px;font-weight:600}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid #e5e7eb;transition:all .2s}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.stat-card{position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.08}
+.stat-card.blue::after{background:#145DA0}
+.stat-card.red::after{background:#D92525}
+.stat-card.green::after{background:#1E9E55}
+.stat-card.orange::after{background:#F59E0B}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;border:none;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,#145DA0,#0B6FE8);color:#fff;box-shadow:0 2px 8px rgba(20,93,160,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(20,93,160,.35)}
+.btn-danger{background:linear-gradient(135deg,#D92525,#ef4444);color:#fff}
+.btn-success{background:linear-gradient(135deg,#1E9E55,#22c55e);color:#fff}
+.btn-outline{background:transparent;border:2px solid #e5e7eb;color:#374151}
+.btn-outline:hover{border-color:#145DA0;color:#145DA0}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-orange{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-gray{background:#f3f4f6;color:#374151}
+.input{width:100%;padding:10px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color .2s;background:#fff}
+.input:focus{outline:none;border-color:#145DA0;box-shadow:0 0 0 3px rgba(20,93,160,.1)}
+.label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+.table-container{overflow-x:auto;border-radius:12px;border:1px solid #e5e7eb;background:#fff}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;padding:12px 16px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #e5e7eb}
+td{padding:12px 16px;font-size:14px;color:#374151;border-bottom:1px solid #f1f5f9}
+tr:hover td{background:#f8fafc}
+.tab{padding:10px 20px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+.tab:hover{color:#145DA0}
+.tab.active{color:#145DA0;border-bottom-color:#145DA0}
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-radius:12px;margin-bottom:8px;border-left:4px solid}
+.alert-critical{background:#fef2f2;border-left-color:#D92525}
+.alert-warning{background:#fffbeb;border-left-color:#F59E0B}
+.alert-normal{background:#f0fdf4;border-left-color:#1E9E55}
+.login-bg{position:relative;overflow:hidden}
+.login-bg::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(20,93,160,.15) 0%,transparent 50%),radial-gradient(circle at 70% 80%,rgba(217,37,37,.08) 0%,transparent 40%)}
+.grid-pattern{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide-in{animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.pulse-dot{width:8px;height:8px;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.id-card{width:340px;min-height:200px;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);position:relative}
+.id-card-header{background:linear-gradient(135deg,#0B2D5B,#145DA0);padding:16px 20px;color:#fff}
+.id-card-body{padding:16px 20px;background:#fff}
+@media(max-width:768px){
+#sidebar{transform:translateX(-100%)}
+#sidebar.open{transform:translateX(0)}
+#mainContent{margin-left:0!important}
+}
+.search-box{position:relative}
+.search-box input{padding-left:40px}
+.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af}
+.progress-bar{height:6px;border-radius:3px;background:#e5e7eb;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+</style>
+</head>
+<body class="font-body bg-imec-gray min-h-screen">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-imec-navy via-imec-dark to-imec-blue p-4">
+<div class="grid-pattern"></div>
+<div class="relative z-10 w-full max-w-md">
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur mb-4 border border-white/20">
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+    </div>
+    <h1 class="font-display text-3xl font-bold text-white mb-1">IMEC Compliance</h1>
+    <p class="text-blue-200/70 text-sm font-medium">Industrial Compliance Management</p>
+  </div>
+  <div class="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
+    <h2 class="font-display text-xl font-bold text-imec-dark mb-6">Acesso ao Sistema</h2>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="mb-4">
+        <label class="label">E-mail</label>
+        <input type="email" id="loginEmail" class="input" placeholder="seu@email.com" value="admin@imec.com.br" required>
+      </div>
+      <div class="mb-6">
+        <label class="label">Senha</label>
+        <input type="password" id="loginPassword" class="input" placeholder="Digite sua senha" value="admin123" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-full justify-center py-3 text-base">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+        Entrar
+      </button>
+    </form>
+    <div class="mt-6 pt-4 border-t border-gray-100">
+      <p class="text-xs text-gray-400 text-center mb-3">Usuários de demonstração:</p>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="bg-gray-50 rounded-lg p-2 text-center"><span class="font-semibold text-imec-dark">Admin</span><br><span class="text-gray-500">admin@imec.com.br</span></div>
+        <div class="bg-gray-50 rounded-lg p-2 text-center"><span class="font-semibold text-imec-dark">Engenharia</span><br><span class="text-gray-500">eng@imec.com.br</span></div>
+        <div class="bg-gray-50 rounded-lg p-2 text-center"><span class="font-semibold text-imec-dark">RH/Segurança</span><br><span class="text-gray-500">rh@imec.com.br</span></div>
+        <div class="bg-gray-50 rounded-lg p-2 text-center"><span class="font-semibold text-imec-dark">Visualizador</span><br><span class="text-gray-500">view@imec.com.br</span></div>
+      </div>
+      <p class="text-xs text-gray-400 text-center mt-3">Senha para todos: <strong>admin123</strong></p>
+    </div>
+  </div>
+  <p class="text-center text-blue-200/40 text-xs mt-6">IMEC Soluções Industriais &copy; 2026 — v1.0</p>
+</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appShell" class="hidden min-h-screen flex">
+<!-- SIDEBAR -->
+<aside id="sidebar" class="w-64 bg-imec-dark min-h-screen fixed left-0 top-0 z-40 flex flex-col transition-transform duration-300">
+<div class="p-5 border-b border-white/10">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-imec-blue to-blue-400 flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      </div>
+      <div>
+        <h2 class="font-display text-white font-bold text-sm leading-tight">IMEC Compliance</h2>
+        <p class="text-blue-300/60 text-xs">Industrial v1.0</p>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 py-3 overflow-y-auto">
+    <div class="sidebar-section">Principal</div>
+    <a class="sidebar-link active" data-page="dashboard" onclick="navigate('dashboard')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      Dashboard
+    </a>
+    <div class="sidebar-section">Pessoas</div>
+    <a class="sidebar-link" data-page="employees" onclick="navigate('employees')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Funcionários
+    </a>
+    <a class="sidebar-link" data-page="trainings" onclick="navigate('trainings')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.668 18.477 18.072 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      NRs / Treinamentos
+    </a>
+    <a class="sidebar-link" data-page="certificates" onclick="navigate('certificates')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      Certificados
+    </a>
+    <a class="sidebar-link" data-page="idcards" onclick="navigate('idcards')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0"/></svg>
+      Carteirinhas
+    </a>
+    <a class="sidebar-link" data-page="aso" onclick="navigate('aso')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      ASO
+    </a>
+    <a class="sidebar-link" data-page="epi" onclick="navigate('epi')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      EPI
+    </a>
+    <div class="sidebar-section">Equipamentos</div>
+    <a class="sidebar-link" data-page="equipment" onclick="navigate('equipment')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      Equipamentos
+    </a>
+    <a class="sidebar-link" data-page="cranes" onclick="navigate('cranes')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      Guindastes / Munck
+    </a>
+    <div class="sidebar-section">Operações</div>
+    <a class="sidebar-link" data-page="clients" onclick="navigate('clients')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      Clientes
+    </a>
+    <a class="sidebar-link" data-page="projects" onclick="navigate('projects')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      Obras
+    </a>
+    <a class="sidebar-link" data-page="documents" onclick="navigate('documents')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      ART / APR / Rigging
+    </a>
+    <a class="sidebar-link" data-page="matrix" onclick="navigate('matrix')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      Matriz de Competência
+    </a>
+    <div class="sidebar-section">Sistema</div>
+    <a class="sidebar-link" data-page="reports" onclick="navigate('reports')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Relatórios
+    </a>
+    <a class="sidebar-link" data-page="users" onclick="navigate('users')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      Usuários
+    </a>
+    <a class="sidebar-link" data-page="settings" onclick="navigate('settings')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Configurações
+    </a>
+  </nav>
+  <div class="p-4 border-t border-white/10">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-8 h-8 rounded-full bg-imec-blue flex items-center justify-center text-white text-xs font-bold" id="sidebarAvatar">AD</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-white text-sm font-semibold truncate" id="sidebarUserName">Administrador</p>
+        <p class="text-blue-300/50 text-xs truncate" id="sidebarUserRole">Admin</p>
+      </div>
+    </div>
+    <button onclick="handleLogout()" class="sidebar-link w-full text-red-400 hover:text-red-300 hover:bg-red-500/10">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Sair
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent" class="flex-1 ml-64 min-h-screen">
+<!-- TOPBAR -->
+<header id="topbar" class="bg-white shadow-sm h-16 flex items-center justify-between px-6 sticky top-0 z-30">
+<div class="flex items-center gap-4">
+    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div>
+      <h1 class="font-display text-lg font-bold text-imec-dark" id="pageTitle">Dashboard</h1>
+      <p class="text-xs text-gray-400" id="pageSubtitle">Visão geral do sistema</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="relative">
+      <button onclick="toggleNotifPanel()" class="p-2 rounded-lg hover:bg-gray-100 relative">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="absolute -top-1 -right-1 w-5 h-5 bg-imec-red text-white text-xs rounded-full flex items-center justify-center font-bold" id="notifBadge">0</span>
+      </button>
+    </div>
+    <a href="#" onclick="openPublicConsult()" class="btn btn-outline btn-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      Consultar Certificado
+    </a>
+    <div class="w-9 h-9 rounded-full bg-imec-blue flex items-center justify-center text-white text-sm font-bold cursor-pointer" id="topAvatar">AD</div>
+  </div>
+</header>
+<!-- PAGE CONTENT -->
+<div id="pageContent" class="p-6">
+<!-- Dynamic content rendered here -->
+</div>
+</main>
+</div>
+
+<!-- PUBLIC VERIFICATION PAGE -->
+<div id="publicPage" class="hidden min-h-screen bg-imec-gray">
+<div class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-lg w-full">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-imec-dark mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h1 class="font-display text-2xl font-bold text-imec-dark">IMEC Compliance Industrial</h1>
+        <p class="text-gray-500 text-sm">Validação de Certificados</p>
+      </div>
+      <div id="publicResult"></div>
+      <div id="publicConsultForm" class="card p-8">
+        <h2 class="font-display text-lg font-bold text-imec-dark mb-4">Consultar Certificado</h2>
+        <p class="text-sm text-gray-500 mb-6">Digite o código do certificado ou escaneie o QR Code para verificar sua autenticidade.</p>
+        <form onsubmit="handlePublicConsult(event)">
+          <div class="mb-4">
+            <label class="label">Código do Certificado</label>
+            <input type="text" id="publicCodeInput" class="input" placeholder="Ex: IMEC-NR11-2026-000001" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-full justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Verificar Autenticidade
+          </button>
+        </form>
+        <div class="mt-6 pt-4 border-t border-gray-100 text-center">
+          <p class="text-xs text-gray-400">IMEC Soluções Industriais &copy; 2026</p>
+          <p class="text-xs text-gray-300 mt-1">Este documento possui autenticação digital por QR Code.</p>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button onclick="closePublicPage()" class="text-sm text-imec-blue hover:underline">&larr; Voltar ao sistema</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="modalOverlay" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+<div id="modalContent" class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+</div>
+</div>
+
+<!-- TOAST -->
+<div id="toastContainer" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
+
+<script>
+// ==================== IMEC COMPLIANCE INDUSTRIAL v1.0 ====================
+// ==================== DATA LAYER ====================
+const DB_KEY = 'imec_compliance_db';
+const SESSION_KEY = 'imec_session';
+
+function getDB() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (raw) return JSON.parse(raw);
+  return initDB();
+}
+
+function saveDB(db) {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+function genId() { return 'id_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
+function genToken() { return 'tk_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 12) + Math.random().toString(36).substr(2, 8); }
+function genCertCode(type, idx) {
+  const y = new Date().getFullYear();
+  return `IMEC-${type}-${y}-${String(idx).padStart(6, '0')}`;
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function addMonths(dateStr, months) {
+  const d = new Date(dateStr);
+  d.setMonth(d.getMonth() + months);
+  return d.toISOString().split('T')[0];
+}
+function daysUntil(dateStr) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const d = new Date(dateStr); d.setHours(0,0,0,0);
+  return Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+}
+function formatDate(d) {
+  if (!d) return '—';
+  const parts = d.split('-');
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+function formatCPF(cpf) { return cpf ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : ''; }
+function maskCPF(cpf) { return cpf ? '***.***.***-' + cpf.slice(-2) : ''; }
+function calcStatus(expDate, alertDays) {
+  if (!expDate) return 'valido';
+  const days = daysUntil(expDate);
+  if (days < 0) return 'vencido';
+  if (days <= (alertDays || 30)) return 'vencendo';
+  return 'valido';
+}
+function statusBadge(status) {
+  const map = {
+    'valido': '<span class="badge badge-green">Válido</span>',
+    'vencendo': '<span class="badge badge-orange">Vencendo</span>',
+    'vencido': '<span class="badge badge-red">Vencido</span>',
+    'cancelado': '<span class="badge badge-red">Cancelado</span>',
+    'ativo': '<span class="badge badge-green">Ativo</span>',
+    'afastado': '<span class="badge badge-orange">Afastado</span>',
+    'desligado': '<span class="badge badge-gray">Desligado</span>',
+    'em_andamento': '<span class="badge badge-blue">Em Andamento</span>',
+    'planejada': '<span class="badge badge-gray">Planejada</span>',
+    'concluida': '<span class="badge badge-green">Concluída</span>',
+    'paralisada': '<span class="badge badge-orange">Paralisada</span>',
+    'cancelada': '<span class="badge badge-red">Cancelada</span>',
+    'manutencao': '<span class="badge badge-orange">Manutenção</span>',
+    'inativo': '<span class="badge badge-gray">Inativo</span>',
+    'apto': '<span class="badge badge-green">Apto</span>',
+    'inapto': '<span class="badge badge-red">Inapto</span>',
+    'apto_restricao': '<span class="badge badge-orange">Apto c/ Restrição</span>',
+    'inapto_result': '<span class="badge badge-red">Inapto</span>'
+  };
+  return map[status] || `<span class="badge badge-gray">${status}</span>`;
+}
+function statusLabel(s) {
+  const map = {'valido':'Válido','vencendo':'Vencendo','vencido':'Vencido','cancelado':'Cancelado','ativo':'Ativo','afastado':'Afastado','desligado':'Desligado'};
+  return map[s] || s;
+}
+
+// ==================== INIT DB ====================
+function initDB() {
+  const now = new Date().toISOString();
+  const db = {
+    users: [
+      {id:'u1',name:'Administrador',email:'admin@imec.com.br',password:'admin123',role:'admin',status:'ativo',created_at:now},
+      {id:'u2',name:'Eng. Roberto',email:'eng@imec.com.br',password:'admin123',role:'engenharia',status:'ativo',created_at:now},
+      {id:'u3',name:'Ana (RH)',email:'rh@imec.com.br',password:'admin123',role:'rh',status:'ativo',created_at:now},
+      {id:'u4',name:'Carlos (View)',email:'view@imec.com.br',password:'admin123',role:'viewer',status:'ativo',created_at:now},
+      {id:'u5',name:'Clealco',email:'clealco@cliente.com',password:'admin123',role:'client',status:'ativo',client_id:'c1',created_at:now}
+    ],
+    employees: [
+      {id:'e1',full_name:'João da Silva Santos',cpf:'12345678901',rg:'12.345.678-9',birth_date:'1988-05-15',phone:'(16) 99999-1234',email:'joao@email.com',address:'Rua das Flores, 123 - Jaboticabal/SP',role_position:'Operador de Munck',department:'Operações',admission_date:'2020-03-10',status:'ativo',photo_url:'',notes:'Funcionário modelo',created_at:now},
+      {id:'e2',full_name:'Carlos Henrique Oliveira',cpf:'23456789012',rg:'23.456.789-0',birth_date:'1992-08-22',phone:'(16) 99888-5678',email:'carlos@email.com',address:'Av. Brasil, 456 - Sertãozinho/SP',role_position:'Soldador',department:'Soldagem',admission_date:'2021-06-15',status:'ativo',photo_url:'',notes:'',created_at:now},
+      {id:'e3',full_name:'Pedro Alves Ferreira',cpf:'34567890123',rg:'34.567.890-1',birth_date:'1985-12-03',phone:'(16) 99777-9012',email:'pedro@email.com',address:'Rua São Paulo, 789 - Ribeirão Preto/SP',role_position:'Montador Industrial',department:'Montagem',admission_date:'2019-01-20',status:'ativo',photo_url:'',notes:'Experiência em NR-33',created_at:now}
+    ],
+    trainings: [
+      {id:'t1',name:'NR-10 — Segurança em Instalações Elétricas',code:'NR-10',category:'NR',description:'Segurança em instalações e serviços em eletricidade',default_workload:40,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t2',name:'NR-11 — Transporte, Movimentação e Armazenagem de Materiais',code:'NR-11',category:'NR',description:'Transporte e movimentação de materiais',default_workload:16,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t3',name:'NR-12 — Segurança em Máquinas e Equipamentos',code:'NR-12',category:'NR',description:'Segurança no trabalho com máquinas e equipamentos',default_workload:16,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t4',name:'NR-13 — Caldeiras, Vasos de Pressão e Tubulações',code:'NR-13',category:'NR',description:'Segurança em caldeiras, vasos de pressão e tubulações',default_workload:40,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t5',name:'NR-18 — Segurança na Construção Civil',code:'NR-18',category:'NR',description:'Segurança e saúde na indústria da construção',default_workload:20,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t6',name:'NR-33 — Espaço Confinado',code:'NR-33',category:'NR',description:'Segurança em espaços confinados',default_workload:16,default_validity_months:12,requires_recycling:true,status:'ativo'},
+      {id:'t7',name:'NR-35 — Trabalho em Altura',code:'NR-35',category:'NR',description:'Segurança no trabalho em altura',default_workload:8,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t8',name:'Operador de Munck',code:'MUNCK',category:'Operação',description:'Operação de caminhão Munck',default_workload:40,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t9',name:'Operador de Guindaste',code:'GUINDASTE',category:'Operação',description:'Operação de guindastes móveis e fixos',default_workload:40,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t10',name:'Operador de Ponte Rolante',code:'PONTE',category:'Operação',description:'Operação de ponte rolante',default_workload:20,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t11',name:'Operador de Plataforma Elevatória',code:'PLATAFORMA',category:'Operação',description:'Operação de plataforma elevatória veicular',default_workload:16,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t12',name:'Soldador',code:'SOLDADOR',category:'Técnico',description:'Treinamento técnico para soldagem',default_workload:40,default_validity_months:24,requires_recycling:false,status:'ativo'},
+      {id:'t13',name:'Caldeireiro',code:'CALDEIREIRO',category:'Técnico',description:'Treinamento técnico para caldeiraria',default_workload:40,default_validity_months:24,requires_recycling:false,status:'ativo'},
+      {id:'t14',name:'Montador de Andaime',code:'ANDAIME',category:'Técnico',description:'Montagem e desmontagem de andaimes',default_workload:16,default_validity_months:24,requires_recycling:true,status:'ativo'},
+      {id:'t15',name:'Trabalho a Quente',code:'QUENTE',category:'Segurança',description:'Permissão para trabalho a quente',default_workload:8,default_validity_months:12,requires_recycling:true,status:'ativo'},
+      {id:'t16',name:'Integração de Segurança',code:'INTEG',category:'Segurança',description:'Integração de segurança admissional',default_workload:8,default_validity_months:0,requires_recycling:false,status:'ativo'}
+    ],
+    certificates: [
+      {id:'cert1',employee_id:'e1',training_id:'t8',certificate_code:'IMEC-MUNCK-2026-000001',verification_token:genToken(),issue_date:'2025-06-01',expiration_date:'2027-06-01',workload:40,instructor_name:'Ricardo Mendes',issuer_company:'IMEC Soluções Industriais',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',pdf_url:'',card_image_url:'',status:'valido',notes:'',created_by:'u1',created_at:now},
+      {id:'cert2',employee_id:'e1',training_id:'t2',certificate_code:'IMEC-NR11-2026-000002',verification_token:genToken(),issue_date:'2025-03-15',expiration_date:'2027-03-15',workload:16,instructor_name:'Ricardo Mendes',issuer_company:'IMEC Soluções Industriais',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',pdf_url:'',card_image_url:'',status:'valido',notes:'',created_by:'u1',created_at:now},
+      {id:'cert3',employee_id:'e2',training_id:'t7',certificate_code:'IMEC-NR35-2026-000003',verification_token:genToken(),issue_date:'2024-01-10',expiration_date:'2025-01-10',workload:8,instructor_name:'Ana Paula Costa',issuer_company:'IMEC Soluções Industriais',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',pdf_url:'',card_image_url:'',status:'vencido',notes:'Necessita reciclagem urgente',created_by:'u1',created_at:now},
+      {id:'cert4',employee_id:'e3',training_id:'t6',certificate_code:'IMEC-NR33-2026-000004',verification_token:genToken(),issue_date:'2025-09-01',expiration_date:'2026-07-01',workload:16,instructor_name:'Carlos Eduardo',issuer_company:'IMEC Soluções Industriais',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',pdf_url:'',card_image_url:'',status:'vencendo',notes:'',created_by:'u1',created_at:now},
+      {id:'cert5',employee_id:'e3',training_id:'t5',certificate_code:'IMEC-NR18-2026-000005',verification_token:genToken(),issue_date:'2025-05-20',expiration_date:'2027-05-20',workload:20,instructor_name:'Ana Paula Costa',issuer_company:'IMEC Soluções Industriais',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',pdf_url:'',card_image_url:'',status:'valido',notes:'',created_by:'u1',created_at:now}
+    ],
+    medical_exams: [
+      {id:'me1',employee_id:'e1',exam_type:'periódico',issue_date:'2025-06-01',expiration_date:'2026-06-01',doctor_name:'Dr. Marcos Lima',crm:'123456/SP',aptitude_result:'apto',role_position:'Operador de Munck',pdf_url:'',notes:'',created_at:now},
+      {id:'me2',employee_id:'e2',exam_type:'admissional',issue_date:'2024-06-15',expiration_date:'2025-06-15',doctor_name:'Dr. Marcos Lima',crm:'123456/SP',aptitude_result:'apto',role_position:'Soldador',pdf_url:'',notes:'',created_at:now},
+      {id:'me3',employee_id:'e3',exam_type:'periódico',issue_date:'2025-01-20',expiration_date:'2026-01-20',doctor_name:'Dr. Fernanda Souza',crm:'654321/SP',aptitude_result:'apto_restricao',role_position:'Montador Industrial',pdf_url:'',notes:'Restrição: não pode trabalhar acima de 5m sem supervisão',created_at:now}
+    ],
+    epi_records: [
+      {id:'epi1',employee_id:'e1',epi_name:'Capacete de Segurança',ca_number:'12345',quantity:1,delivery_date:'2025-06-01',replacement_date:'2026-06-01',attachment_url:'',notes:''},
+      {id:'epi2',employee_id:'e1',epi_name:'Cinto de Segurança Tipo Paraquedista',ca_number:'23456',quantity:1,delivery_date:'2025-06-01',replacement_date:'2026-06-01',attachment_url:'',notes:''},
+      {id:'epi3',employee_id:'e2',epi_name:'Máscara de Solda Automática',ca_number:'34567',quantity:1,delivery_date:'2025-03-15',replacement_date:'2026-03-15',attachment_url:'',notes:''},
+      {id:'epi4',employee_id:'e2',epi_name:'Avental de Raspa',ca_number:'45678',quantity:1,delivery_date:'2025-03-15',replacement_date:'2025-09-15',attachment_url:'',notes:''},
+      {id:'epi5',employee_id:'e3',epi_name:'Óculos de Proteção',ca_number:'56789',quantity:1,delivery_date:'2025-01-20',replacement_date:'2026-01-20',attachment_url:'',notes:''}
+    ],
+    equipment: [
+      {id:'eq1',name:'MUNCK HINCOL 43.000',type:'Caminhão Munck',brand:'HINCOL',model:'43.000',serial_number:'HN43000-2020',asset_number:'EQ-001',plate:'ABC-1D23',year:'2020',capacity:'43.000 kgf.m',owner:'IMEC Soluções Industriais',status:'ativo',photo_url:'',notes:'Equipamento principal para operações de carga'},
+      {id:'eq2',name:'Guindaste XCMG QY70K',type:'Guindaste',brand:'XCMG',model:'QY70K',serial_number:'XCMG-QY70K-2019',asset_number:'EQ-002',plate:'DEF-4G56',year:'2019',capacity:'70 toneladas',owner:'IMEC Soluções Industriais',status:'ativo',photo_url:'',notes:'Guindaste telescópico'},
+      {id:'eq3',name:'Guindaste XCMG 110t',type:'Guindaste',brand:'XCMG',model:'QY110K',serial_number:'XCMG-110K-2021',asset_number:'EQ-003',plate:'GHI-7J89',year:'2021',capacity:'110 toneladas',owner:'IMEC Soluções Industriais',status:'ativo',photo_url:'',notes:''}
+    ],
+    equipment_documents: [
+      {id:'ed1',equipment_id:'eq1',document_type:'Laudo Técnico',title:'Laudo de Capacidade Técnica - Munck HINCOL',document_number:'LT-001/2025',issue_date:'2025-01-15',expiration_date:'2026-01-15',responsible_name:'Eng. Roberto Silva',file_url:'',status:'valido',notes:''},
+      {id:'ed2',equipment_id:'eq1',document_type:'ART',title:'ART de Operação - Munck',document_number:'ART-2025-001',issue_date:'2025-01-15',expiration_date:'2026-01-15',responsible_name:'Eng. Roberto Silva',file_url:'',status:'valido',notes:''},
+      {id:'ed3',equipment_id:'eq2',document_type:'Laudo Técnico',title:'Laudo de Inspeção - Guindaste XCMG QY70K',document_number:'LT-002/2025',issue_date:'2025-03-01',expiration_date:'2026-03-01',responsible_name:'Eng. Roberto Silva',file_url:'',status:'valido',notes:''},
+      {id:'ed4',equipment_id:'eq2',document_type:'Tabela de Carga',title:'Tabela de Carga - XCMG QY70K',document_number:'TC-002/2025',issue_date:'2025-03-01',expiration_date:'2027-03-01',responsible_name:'Eng. Roberto Silva',file_url:'',status:'valido',notes:''},
+      {id:'ed5',equipment_id:'eq3',document_type:'Laudo Técnico',title:'Laudo de Inspeção - XCMG 110t',document_number:'LT-003/2024',issue_date:'2024-06-01',expiration_date:'2025-06-01',responsible_name:'Eng. Roberto Silva',file_url:'',status:'vencido',notes:'Laudo vencido - agendar reinspeção'}
+    ],
+    clients: [
+      {id:'c1',name:'Clealco Açúcar e Álcool',cnpj:'12.345.678/0001-90',contact_name:'Roberto Clealco',phone:'(16) 3333-1000',email:'contato@clealco.com.br',address:'Usina Clealco, km 22',city:'Cleápolis',state:'SP',notes:'Cliente desde 2020'},
+      {id:'c2',name:'Companhia Müller de Bebidas',cnpj:'23.456.789/0001-01',contact_name:'Fernanda Müller',phone:'(16) 3444-2000',email:'engenharia@muller.com.br',address:'Rod. SP-304, km 150',city:'Piracicaba',state:'SP',notes:''},
+      {id:'c3',name:'Usina Santa Adélia',cnpj:'34.567.890/0001-12',contact_name:'José Santos',phone:'(16) 3555-3000',email:'manutencao@santaadelia.com.br',address:'Usina Santa Adélia s/n',city:'Santa Adélia',state:'SP',notes:'Parceiro estratégico'}
+    ],
+    projects: [
+      {id:'p1',name:'Manutenção Caldeira NR-13',client_id:'c1',location:'Usina Clealco - Área Industrial',start_date:'2025-07-01',expected_end_date:'2025-12-31',status:'em_andamento',service_description:'Manutenção preventiva e corretiva em caldeira de alta pressão conforme NR-13',technical_responsible:'Eng. Roberto Silva',notes:'Projeto prioritário'},
+      {id:'p2',name:'Plano de Rigging - Montagem Industrial',client_id:'c2',location:'Companhia Müller - Setor de Envase',start_date:'2025-08-01',expected_end_date:'2025-11-30',status:'planejada',service_description:'Elaboração de plano de rigging para movimentação de equipamentos na nova linha de envase',technical_responsible:'Eng. Roberto Silva',notes:''},
+      {id:'p3',name:'Operação Guindaste - Trocador de Calor',client_id:'c3',location:'Usina Santa Adélia - Área de Produção',start_date:'2025-06-15',expected_end_date:'2025-09-30',status:'em_andamento',service_description:'Operação com guindaste para substituição de trocador de calor',technical_responsible:'Eng. Roberto Silva',notes:'Operação crítica'}
+    ],
+    project_employees: [
+      {id:'pe1',project_id:'p1',employee_id:'e1',role_in_project:'Operador de Munck'},
+      {id:'pe2',project_id:'p1',employee_id:'e3',role_in_project:'Montador Industrial'},
+      {id:'pe3',project_id:'p3',employee_id:'e1',role_in_project:'Operador de Guindaste'},
+      {id:'pe4',project_id:'p3',employee_id:'e2',role_in_project:'Soldador'}
+    ],
+    project_equipment: [
+      {id:'pq1',project_id:'p1',equipment_id:'eq1'},
+      {id:'pq2',project_id:'p3',equipment_id:'eq2'},
+      {id:'pq3',project_id:'p3',equipment_id:'eq3'}
+    ],
+    technical_documents: [
+      {id:'td1',document_type:'ART',document_number:'ART-2025-101',title:'ART de Execução - Manutenção Caldeira',client_id:'c1',project_id:'p1',equipment_id:'',employee_id:'',responsible_name:'Eng. Roberto Silva',crea_number:'123456/SP',issue_date:'2025-07-01',expiration_date:'2025-12-31',file_url:'',status:'valido',notes:''},
+      {id:'td2',document_type:'APR',document_number:'APR-2025-050',title:'APR - Operação Guindaste XCMG QY70K',client_id:'c3',project_id:'p3',equipment_id:'eq2',employee_id:'e1',responsible_name:'Eng. Roberto Silva',crea_number:'123456/SP',issue_date:'2025-06-15',expiration_date:'2025-09-30',file_url:'',status:'valido',notes:''},
+      {id:'td3',document_type:'Plano de Rigging',document_number:'PR-2025-010',title:'Plano de Rigging - Linha de Envase',client_id:'c2',project_id:'p2',equipment_id:'',employee_id:'',responsible_name:'Eng. Roberto Silva',crea_number:'123456/SP',issue_date:'2025-08-01',expiration_date:'2025-11-30',file_url:'',status:'valido',notes:''}
+    ],
+    competency_requirements: [
+      {id:'cr1',activity_name:'Trabalho em Altura com Monta­gem de Andaime',required_training_ids:['t7','t5','t14'],requires_aso:true,requires_epi:true,requires_client_integration:true,notes:''},
+      {id:'cr2',activity_name:'Operação de Guindaste',required_training_ids:['t9','t2'],requires_aso:true,requires_epi:true,requires_client_integration:true,notes:''},
+      {id:'cr3',activity_name:'Espaço Confinado',required_training_ids:['t6'],requires_aso:true,requires_epi:true,requires_client_integration:true,notes:''},
+      {id:'cr4',activity_name:'Soldagem em Geral',required_training_ids:['t12','t15'],requires_aso:true,requires_epi:true,requires_client_integration:false,notes:''}
+    ],
+    audit_logs: [
+      {id:'al1',user_id:'u1',action:'create',entity_type:'certificate',entity_id:'cert1',description:'Certificado IMEC-MUNCK-2026-000001 criado para João da Silva',created_at:now},
+      {id:'al2',user_id:'u1',action:'create',entity_type:'certificate',entity_id:'cert3',description:'Certificado NR-35 criado para Carlos Henrique',created_at:now}
+    ],
+    settings: {
+      id:'s1',company_name:'IMEC Soluções Industriais',cnpj:'12.345.678/0001-99',logo_url:'',address:'Rua Industrial, 1000 - Ribeirão Preto/SP',email:'contato@imec.com.br',phone:'(16) 3333-0000',technical_responsible:'Eng. Roberto Silva',crea_number:'123456/SP',signature_url:'',expiration_alert_days:30,allow_public_pdf_view:true,report_footer:'IMEC Soluções Industriais — Sistema de Gestão de Compliance Industrial v1.0',created_at:now
+    }
+  };
+  saveDB(db);
+  return db;
+}
+
+// ==================== SESSION ====================
+function getSession() {
+  const raw = sessionStorage.getItem(SESSION_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+function setSession(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+function canEdit() {
+  const s = getSession();
+  return s && (s.role === 'admin' || s.role === 'engenharia' || s.role === 'rh');
+}
+function canAdmin() {
+  const s = getSession();
+  return s && s.role === 'admin';
+}
+function canAccess(page) {
+  const s = getSession();
+  if (!s) return false;
+  if (s.role === 'admin') return true;
+  if (s.role === 'client') return ['dashboard','projects','documents'].includes(page);
+  if (s.role === 'viewer') return true;
+  const perms = {
+    'engenharia': ['dashboard','employees','trainings','certificates','idcards','equipment','cranes','clients','projects','documents','matrix','reports','settings'],
+    'rh': ['dashboard','employees','trainings','certificates','idcards','aso','epi','reports','settings']
+  };
+  return (perms[s.role] || []).includes(page);
+}
+
+// ==================== AUTH ====================
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const db = getDB();
+  const user = db.users.find(u => u.email === email && u.password === password);
+  if (!user) { showToast('E-mail ou senha inválidos', 'error'); return; }
+  if (user.status !== 'ativo') { showToast('Usuário inativo', 'error'); return; }
+  setSession(user);
+  showApp();
+  showToast('Bem-vindo, ' + user.name + '!', 'success');
+}
+
+function handleLogout() {
+  clearSession();
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function showApp() {
+  const user = getSession();
+  if (!user) return;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('publicPage').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  document.getElementById('sidebarUserName').textContent = user.name;
+  document.getElementById('sidebarUserRole').textContent = roleLabel(user.role);
+  const initials = user.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('topAvatar').textContent = initials;
+  navigate('dashboard');
+}
+
+function roleLabel(r) {
+  const map = {admin:'Administrador',engenharia:'Engenharia',rh:'RH / Segurança',viewer:'Visualizador',client:'Cliente'};
+  return map[r] || r;
+}
+
+// ==================== NAVIGATION ====================
+let currentPage = 'dashboard';
+let currentSubPage = null;
+let currentEditId = null;
+
+function navigate(page, sub, editId) {
+  if (!canAccess(page)) { showToast('Acesso negado para seu perfil', 'error'); return; }
+  currentPage = page;
+  currentSubPage = sub || null;
+  currentEditId = editId || null;
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const link = document.querySelector(`.sidebar-link[data-page="${page}"]`);
+  if (link) link.classList.add('active');
+  updateNotifBadge();
+  renderPage();
+}
+
+function updateNotifBadge() {
+  const db = getDB();
+  const alerts = getAlerts(db);
+  document.getElementById('notifBadge').textContent = alerts.length;
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ==================== ALERTS ENGINE ====================
+function getAlerts(db) {
+  const alerts = [];
+  const alertDays = db.settings.expiration_alert_days || 30;
+  // Employee certificates
+  db.certificates.forEach(cert => {
+    const emp = db.employees.find(e => e.id === cert.employee_id);
+    const train = db.trainings.find(t => t.id === cert.training_id);
+    if (!emp || emp.status !== 'ativo') return;
+    const status = cert.status === 'cancelado' ? 'cancelado' : calcStatus(cert.expiration_date, alertDays);
+    if (status === 'vencido') alerts.push({level:'critical',msg:`${emp.full_name} — ${train?train.code:'N/A'} vencido (${formatDate(cert.expiration_date)})`,type:'Certificado Vencido'});
+    else if (status === 'vencendo') alerts.push({level:'warning',msg:`${emp.full_name} — ${train?train.code:'N/A'} vencendo em ${daysUntil(cert.expiration_date)} dias`,type:'Certificado Vencendo'});
+    else if (status === 'cancelado') alerts.push({level:'critical',msg:`${emp.full_name} — ${train?train.code:'N/A'} cancelado`,type:'Certificado Cancelado'});
+  });
+  // ASO
+  db.medical_exams.forEach(med => {
+    const emp = db.employees.find(e => e.id === med.employee_id);
+    if (!emp || emp.status !== 'ativo') return;
+    const status = calcStatus(med.expiration_date, alertDays);
+    if (status === 'vencido') alerts.push({level:'critical',msg:`ASO vencido — ${emp.full_name} (${formatDate(med.expiration_date)})`,type:'ASO Vencido'});
+    else if (status === 'vencendo') alerts.push({level:'warning',msg:`ASO vencendo — ${emp.full_name} em ${daysUntil(med.expiration_date)} dias`,type:'ASO Vencendo'});
+  });
+  // Equipment docs
+  db.equipment_documents.forEach(doc => {
+    const eq = db.equipment.find(e => e.id === doc.equipment_id);
+    if (!eq) return;
+    const status = calcStatus(doc.expiration_date, alertDays);
+    if (status === 'vencido') alerts.push({level:'critical',msg:`Laudo vencido — ${eq.name} (${formatDate(doc.expiration_date)})`,type:'Laudo Vencido'});
+    else if (status === 'vencendo') alerts.push({level:'warning',msg:`Laudo vencendo — ${eq.name} em ${daysUntil(doc.expiration_date)} dias`,type:'Laudo Vencendo'});
+  });
+  return alerts;
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const colors = {success:'bg-imec-green',error:'bg-imec-red',info:'bg-imec-blue',warning:'bg-imec-orange'};
+  const div = document.createElement('div');
+  div.className = `${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium fade-in max-w-sm`;
+  div.textContent = msg;
+  c.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, 3500);
+}
+
+// ==================== MODAL ====================
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ==================== AUDIT LOG ====================
+function addLog(action, entityType, entityId, desc) {
+  const db = getDB();
+  const user = getSession();
+  db.audit_logs.unshift({id:genId(),user_id:user?user.id:'',action,entity_type:entityType,entity_id:entityId,description:desc,created_at:new Date().toISOString()});
+  saveDB(db);
+}
+
+// ==================== PUBLIC PAGES ====================
+function openPublicConsult() {
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('publicPage').classList.remove('hidden');
+  document.getElementById('publicConsultForm').classList.remove('hidden');
+  document.getElementById('publicResult').innerHTML = '';
+}
+function closePublicPage() {
+  const user = getSession();
+  if (user) {
+    document.getElementById('publicPage').classList.add('hidden');
+    document.getElementById('appShell').classList.remove('hidden');
+  } else {
+    document.getElementById('publicPage').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+}
+function verifyCertificate(token) {
+  const db = getDB();
+  const cert = db.certificates.find(c => c.verification_token === token);
+  return cert ? {cert, employee: db.employees.find(e=>e.id===cert.employee_id), training: db.trainings.find(t=>t.id===cert.training_id)} : null;
+}
+function showPublicVerification(token) {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('publicPage').classList.remove('hidden');
+  document.getElementById('publicConsultForm').classList.add('hidden');
+  const data = verifyCertificate(token);
+  const result = document.getElementById('publicResult');
+  if (!data) {
+    result.innerHTML = `<div class="card p-8 text-center"><div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg></div><h2 class="font-display text-xl font-bold text-gray-800 mb-2">Certificado não encontrado</h2><p class="text-gray-500 text-sm">Este certificado não foi localizado na base oficial da IMEC Compliance Industrial. Confira o código ou entre em contato com a empresa emissora.</p></div>`;
+    return;
+  }
+  const {cert, employee, training} = data;
+  const alertDays = getDB().settings.expiration_alert_days || 30;
+  const status = cert.status === 'cancelado' ? 'cancelado' : calcStatus(cert.expiration_date, alertDays);
+  let statusColor, statusTitle, statusIcon, statusBg;
+  if (status === 'valido') { statusColor='text-imec-green'; statusTitle='Certificado Válido'; statusBg='bg-green-50 border-imec-green'; statusIcon='<svg class="w-10 h-10 text-imec-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'; }
+  else if (status === 'vencendo') { statusColor='text-imec-orange'; statusTitle='Certificado Vencendo'; statusBg='bg-orange-50 border-imec-orange'; statusIcon='<svg class="w-10 h-10 text-imec-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>'; }
+  else if (status === 'vencido') { statusColor='text-imec-red'; statusTitle='Certificado Vencido'; statusBg='bg-red-50 border-imec-red'; statusIcon='<svg class="w-10 h-10 text-imec-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'; }
+  else { statusColor='text-imec-red'; statusTitle='Certificado Cancelado'; statusBg='bg-red-50 border-imec-red'; statusIcon='<svg class="w-10 h-10 text-imec-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>'; }
+  result.innerHTML = `
+    <div class="card p-8 ${statusBg} border-l-4">
+      <div class="flex items-center gap-4 mb-6">
+        ${statusIcon}
+        <div>
+          <h2 class="font-display text-2xl font-bold ${statusColor}">${statusTitle}</h2>
+          <p class="text-gray-500 text-sm">IMEC Compliance Industrial</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div><span class="text-gray-500 block">Funcionário</span><span class="font-semibold text-gray-800">${employee?employee.full_name:'N/A'}</span></div>
+        <div><span class="text-gray-500 block">CPF</span><span class="font-semibold text-gray-800">${employee?maskCPF(employee.cpf):'N/A'}</span></div>
+        <div><span class="text-gray-500 block">Treinamento</span><span class="font-semibold text-gray-800">${training?training.name:'N/A'}</span></div>
+        <div><span class="text-gray-500 block">Código</span><span class="font-semibold text-gray-800 font-mono text-xs">${cert.certificate_code}</span></div>
+        <div><span class="text-gray-500 block">Carga Horária</span><span class="font-semibold text-gray-800">${cert.workload}h</span></div>
+        <div><span class="text-gray-500 block">Emissão</span><span class="font-semibold text-gray-800">${formatDate(cert.issue_date)}</span></div>
+        <div><span class="text-gray-500 block">Validade</span><span class="font-semibold text-gray-800">${formatDate(cert.expiration_date)}</span></div>
+        <div><span class="text-gray-500 block">Empresa Emissora</span><span class="font-semibold text-gray-800">${cert.issuer_company}</span></div>
+        <div><span class="text-gray-500 block">Instrutor</span><span class="font-semibold text-gray-800">${cert.instructor_name}</span></div>
+        <div><span class="text-gray-500 block">Resp. Técnico</span><span class="font-semibold text-gray-800">${cert.technical_responsible}</span></div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+        <p class="text-xs text-gray-400 italic">"Este documento possui autenticação digital por QR Code. A validade pode ser consultada diretamente na base técnica da IMEC Compliance Industrial."</p>
+      </div>
+    </div>`;
+}
+function handlePublicConsult(e) {
+  e.preventDefault();
+  const code = document.getElementById('publicCodeInput').value.trim();
+  const db = getDB();
+  const cert = db.certificates.find(c => c.certificate_code === code);
+  if (cert) { showPublicVerification(cert.verification_token); }
+  else {
+    document.getElementById('publicResult').innerHTML = `<div class="card p-8 text-center"><div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg></div><h2 class="font-display text-xl font-bold text-gray-800 mb-2">Certificado não encontrado</h2><p class="text-gray-500 text-sm">Este certificado não foi localizado na base oficial da IMEC Compliance Industrial.</p></div>`;
+  }
+}
+
+// ==================== PAGE RENDERER ====================
+function renderPage() {
+  const titles = {
+    dashboard:['Dashboard','Visão geral do sistema'],
+    employees:['Funcionários','Gestão de colaboradores'],
+    trainings:['NRs / Treinamentos','Tipos de treinamento e NRs'],
+    certificates:['Certificados','Certificados e validações'],
+    idcards:['Carteirinhas','Carteirinhas digitais'],
+    aso:['ASO','Atestados de Saúde Ocupacional'],
+    epi:['EPI','Equipamentos de Proteção Individual'],
+    equipment:['Equipamentos','Gestão de equipamentos'],
+    cranes:['Guindastes / Munck','Guindastes e caminhões Munck'],
+    clients:['Clientes','Base de clientes'],
+    projects:['Obras','Obras e serviços'],
+    documents:['ART / APR / Rigging','Documentos técnicos'],
+    matrix:['Matriz de Competência','Análise de aptidão'],
+    reports:['Relatórios','Relatórios e exportações'],
+    users:['Usuários','Gestão de usuários e permissões'],
+    settings:['Configurações','Configurações do sistema']
+  };
+  const t = titles[currentPage] || ['',''];
+  document.getElementById('pageTitle').textContent = t[0];
+  document.getElementById('pageSubtitle').textContent = t[1];
+  const c = document.getElementById('pageContent');
+  c.innerHTML = '<div class="fade-in">' + (renderers[currentPage] ? renderers[currentPage]() : '<p>Página em construção</p>') + '</div>';
+  // Post-render hooks
+  if (renderers[currentPage + '_post']) renderers[currentPage + '_post']();
+}
+
+// ==================== RENDERERS PLACEHOLDER ====================
+const renderers = {};
+
+// ==================== INIT ====================
+window.addEventListener('DOMContentLoaded', function() {
+  // Check URL for public verification
+  const hash = window.location.hash;
+  if (hash.startsWith('#/verificar/')) {
+    const token = hash.replace('#/verificar/', '');
+    showPublicVerification(token);
+    return;
+  }
+  if (hash.startsWith('#/consultar')) {
+    openPublicConsult();
+    return;
+  }
+  const session = getSession();
+  if (session) { showApp(); } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+});
+
+// ==================== DASHBOARD ====================
+renderers.dashboard = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  const activeEmps = db.employees.filter(e => e.status === 'ativo').length;
+  const validCerts = db.certificates.filter(c => calcStatus(c.expiration_date, alertDays) === 'valido' && c.status !== 'cancelado').length;
+  const expiringCerts = db.certificates.filter(c => calcStatus(c.expiration_date, alertDays) === 'vencendo').length;
+  const expiredCerts = db.certificates.filter(c => calcStatus(c.expiration_date, alertDays) === 'vencido' || c.status === 'cancelado').length;
+  const expiredASO = db.medical_exams.filter(m => calcStatus(m.expiration_date, alertDays) === 'vencido').length;
+  const totalEquip = db.equipment.length;
+  const totalCranes = db.equipment.filter(e => e.type === 'Guindaste' || e.type === 'Caminhão Munck').length;
+  const expiredLaudos = db.equipment_documents.filter(d => calcStatus(d.expiration_date, alertDays) === 'vencido').length;
+  const activeProjects = db.projects.filter(p => p.status === 'em_andamento').length;
+  const totalCerts = db.certificates.length;
+  const cancelledCerts = db.certificates.filter(c => c.status === 'cancelado').length;
+  const alerts = getAlerts(db);
+
+  return `
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="card stat-card blue p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gray-500 uppercase">Funcionários Ativos</span>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><svg class="w-4 h-4 text-imec-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+      </div>
+      <p class="text-3xl font-display font-bold text-imec-dark">${activeEmps}</p>
+    </div>
+    <div class="card stat-card green p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gray-500 uppercase">NRs Válidas</span>
+        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center"><svg class="w-4 h-4 text-imec-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <p class="text-3xl font-display font-bold text-imec-green">${validCerts}</p>
+    </div>
+    <div class="card stat-card orange p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gray-500 uppercase">NRs Vencendo</span>
+        <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center"><svg class="w-4 h-4 text-imec-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/></svg></div>
+      </div>
+      <p class="text-3xl font-display font-bold text-imec-orange">${expiringCerts}</p>
+    </div>
+    <div class="card stat-card red p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-gray-500 uppercase">NRs Vencidas</span>
+        <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center"><svg class="w-4 h-4 text-imec-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg></div>
+      </div>
+      <p class="text-3xl font-display font-bold text-imec-red">${expiredCerts}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">ASOs Vencidos</span></div>
+      <p class="text-3xl font-display font-bold ${expiredASO>0?'text-imec-red':'text-imec-dark'}">${expiredASO}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Equipamentos</span></div>
+      <p class="text-3xl font-display font-bold text-imec-dark">${totalEquip}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Guindastes/Munck</span></div>
+      <p class="text-3xl font-display font-bold text-imec-dark">${totalCranes}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Laudos Vencidos</span></div>
+      <p class="text-3xl font-display font-bold ${expiredLaudos>0?'text-imec-red':'text-imec-dark'}">${expiredLaudos}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Obras Ativas</span></div>
+      <p class="text-3xl font-display font-bold text-imec-blue">${activeProjects}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Certificados Emitidos</span></div>
+      <p class="text-3xl font-display font-bold text-imec-dark">${totalCerts}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Cert. Cancelados</span></div>
+      <p class="text-3xl font-display font-bold ${cancelledCerts>0?'text-imec-red':'text-imec-dark'}">${cancelledCerts}</p>
+    </div>
+    <div class="card stat-card p-5">
+      <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-500 uppercase">Clientes</span></div>
+      <p class="text-3xl font-display font-bold text-imec-dark">${db.clients.length}</p>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="card p-6">
+      <h3 class="font-display text-lg font-bold text-imec-dark mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-imec-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        Painel de Alertas
+      </h3>
+      <div class="max-h-96 overflow-y-auto">
+        ${alerts.length === 0 ? '<p class="text-gray-400 text-sm text-center py-8">Nenhum alerta pendente</p>' :
+          alerts.map(a => `<div class="alert-item ${a.level==='critical'?'alert-critical':'alert-warning'}">
+            <div class="pulse-dot mt-1.5 ${a.level==='critical'?'bg-imec-red':'bg-imec-orange'}"></div>
+            <div class="flex-1"><p class="text-sm font-medium text-gray-800">${a.msg}</p><p class="text-xs text-gray-400 mt-1">${a.type}</p></div>
+            <span class="badge ${a.level==='critical'?'badge-red':'badge-orange'}">${a.level==='critical'?'Crítico':'Atenção'}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="card p-6">
+      <h3 class="font-display text-lg font-bold text-imec-dark mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-imec-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Obras em Andamento
+      </h3>
+      <div class="space-y-3">
+        ${db.projects.filter(p=>p.status==='em_andamento').map(p => {
+          const client = db.clients.find(c=>c.id===p.client_id);
+          const emps = db.project_employees.filter(pe=>pe.project_id===p.id).length;
+          return `<div class="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
+            <div class="w-10 h-10 rounded-lg bg-imec-blue/10 flex items-center justify-center"><svg class="w-5 h-5 text-imec-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div>
+            <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">${p.name}</p><p class="text-xs text-gray-400">${client?client.name:''} — ${emps} func.</p></div>
+            <span class="badge badge-blue">${p.status==='em_andamento'?'Em Andamento':p.status}</span>
+          </div>`;
+        }).join('') || '<p class="text-gray-400 text-sm text-center py-8">Nenhuma obra em andamento</p>'}
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-6 mt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-display text-lg font-bold text-imec-dark">Bem-vindo ao IMEC Compliance Industrial</h3>
+    </div>
+    <p class="text-sm text-gray-600 leading-relaxed">O IMEC Compliance Industrial foi desenvolvido para centralizar a gestão de treinamentos, certificados, documentos técnicos, equipamentos e vencimentos, garantindo maior controle, rastreabilidade e segurança nas operações industriais.</p>
+  </div>`;
+};
+
+// ==================== EMPLOYEES ====================
+renderers.employees = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 flex-1">
+      <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar funcionário..." id="empSearch" onkeyup="filterTable('empTable','empSearch')"></div>
+      <select class="input w-auto" id="empStatusFilter" onchange="filterTableByStatus('empTable','empStatusFilter',4)"><option value="">Todos</option><option value="ativo">Ativo</option><option value="afastado">Afastado</option><option value="desligado">Desligado</option></select>
+    </div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editEmployee()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Novo Funcionário</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="empTable"><thead><tr><th>Nome</th><th>CPF</th><th>Função</th><th>Setor</th><th>Status</th><th>NRs</th><th>Ações</th></tr></thead><tbody>`;
+  db.employees.forEach(emp => {
+    const certs = db.certificates.filter(c => c.employee_id === emp.id);
+    const validNRs = certs.filter(c => c.status !== 'cancelado' && calcStatus(c.expiration_date, alertDays) === 'valido').length;
+    const totalNRs = certs.filter(c => c.status !== 'cancelado').length;
+    html += `<tr data-status="${emp.status}">
+      <td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-imec-blue/10 flex items-center justify-center text-imec-blue font-bold text-xs">${emp.full_name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div><div><p class="font-semibold text-gray-800">${emp.full_name}</p><p class="text-xs text-gray-400">${emp.email}</p></div></div></td>
+      <td class="font-mono text-sm">${formatCPF(emp.cpf)}</td>
+      <td>${emp.role_position}</td>
+      <td>${emp.department}</td>
+      <td>${statusBadge(emp.status)}</td>
+      <td><span class="text-sm font-semibold">${validNRs}/${totalNRs}</span> <span class="text-xs text-gray-400">válidas</span></td>
+      <td><div class="flex items-center gap-1">
+        <button class="btn btn-outline btn-sm" onclick="viewEmployee('${emp.id}')" title="Ver perfil"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+        ${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editEmployee('${emp.id}')" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+        ${canAdmin()?`<button class="btn btn-sm text-imec-red hover:bg-red-50" onclick="deleteRecord('employees','${emp.id}','${emp.full_name}')" title="Excluir"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}
+      </div></td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editEmployee(id) {
+  const db = getDB();
+  const emp = id ? db.employees.find(e => e.id === id) : null;
+  const title = emp ? 'Editar Funcionário' : 'Novo Funcionário';
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${title}</h2>
+    <form onsubmit="saveEmployee(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Nome Completo *</label><input type="text" class="input" id="empName" value="${emp?emp.full_name:''}" required></div>
+        <div><label class="label">CPF *</label><input type="text" class="input" id="empCPF" value="${emp?emp.cpf:''}" required placeholder="00000000000"></div>
+        <div><label class="label">RG</label><input type="text" class="input" id="empRG" value="${emp?emp.rg:''}"></div>
+        <div><label class="label">Data de Nascimento</label><input type="date" class="input" id="empBirth" value="${emp?emp.birth_date:''}"></div>
+        <div><label class="label">Telefone</label><input type="text" class="input" id="empPhone" value="${emp?emp.phone:''}"></div>
+        <div><label class="label">E-mail</label><input type="email" class="input" id="empEmail" value="${emp?emp.email:''}"></div>
+        <div class="md:col-span-2"><label class="label">Endereço</label><input type="text" class="input" id="empAddress" value="${emp?emp.address:''}"></div>
+        <div><label class="label">Função/Cargo</label><input type="text" class="input" id="empRole" value="${emp?emp.role_position:''}"></div>
+        <div><label class="label">Setor</label><input type="text" class="input" id="empDept" value="${emp?emp.department:''}"></div>
+        <div><label class="label">Data de Admissão</label><input type="date" class="input" id="empAdmission" value="${emp?emp.admission_date:''}"></div>
+        <div><label class="label">Status</label><select class="input" id="empStatus"><option value="ativo" ${emp&&emp.status==='ativo'?'selected':''}>Ativo</option><option value="afastado" ${emp&&emp.status==='afastado'?'selected':''}>Afastado</option><option value="desligado" ${emp&&emp.status==='desligado'?'selected':''}>Desligado</option></select></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="empNotes">${emp?emp.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </form></div>`);
+}
+
+function saveEmployee(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {
+    full_name: document.getElementById('empName').value,
+    cpf: document.getElementById('empCPF').value,
+    rg: document.getElementById('empRG').value,
+    birth_date: document.getElementById('empBirth').value,
+    phone: document.getElementById('empPhone').value,
+    email: document.getElementById('empEmail').value,
+    address: document.getElementById('empAddress').value,
+    role_position: document.getElementById('empRole').value,
+    department: document.getElementById('empDept').value,
+    admission_date: document.getElementById('empAdmission').value,
+    status: document.getElementById('empStatus').value,
+    notes: document.getElementById('empNotes').value,
+    photo_url: ''
+  };
+  if (id) {
+    const idx = db.employees.findIndex(e => e.id === id);
+    db.employees[idx] = {...db.employees[idx], ...data, updated_at: new Date().toISOString()};
+    addLog('update','employee',id,'Funcionário '+data.full_name+' atualizado');
+  } else {
+    data.id = genId();
+    data.created_at = new Date().toISOString();
+    db.employees.push(data);
+    addLog('create','employee',data.id,'Funcionário '+data.full_name+' cadastrado');
+  }
+  saveDB(db);
+  closeModal();
+  renderPage();
+  showToast(id?'Funcionário atualizado!':'Funcionário cadastrado!','success');
+}
+
+function viewEmployee(id) {
+  const db = getDB();
+  const emp = db.employees.find(e => e.id === id);
+  if (!emp) return;
+  const alertDays = db.settings.expiration_alert_days || 30;
+  const certs = db.certificates.filter(c => c.employee_id === id);
+  const asos = db.medical_exams.filter(m => m.employee_id === id);
+  const epis = db.epi_records.filter(e => e.employee_id === id);
+  const projEmps = db.project_employees.filter(pe => pe.employee_id === id);
+
+  let tabsHtml = `<div class="flex border-b border-gray-200 mb-4 overflow-x-auto">
+    <div class="tab active" onclick="switchEmpTab(this,'empTabGeneral')">Dados Gerais</div>
+    <div class="tab" onclick="switchEmpTab(this,'empTabNRs')">NRs / Treinamentos</div>
+    <div class="tab" onclick="switchEmpTab(this,'empTabASO')">ASO</div>
+    <div class="tab" onclick="switchEmpTab(this,'empTabEPI')">EPI</div>
+    <div class="tab" onclick="switchEmpTab(this,'empTabObras')">Obras</div>
+  </div>`;
+
+  let generalHtml = `<div id="empTabGeneral" class="grid md:grid-cols-2 gap-4 text-sm">
+    <div><span class="text-gray-500">Nome:</span> <strong>${emp.full_name}</strong></div>
+    <div><span class="text-gray-500">CPF:</span> <strong>${formatCPF(emp.cpf)}</strong></div>
+    <div><span class="text-gray-500">RG:</span> <strong>${emp.rg||'—'}</strong></div>
+    <div><span class="text-gray-500">Nascimento:</span> <strong>${formatDate(emp.birth_date)}</strong></div>
+    <div><span class="text-gray-500">Telefone:</span> <strong>${emp.phone||'—'}</strong></div>
+    <div><span class="text-gray-500">E-mail:</span> <strong>${emp.email||'—'}</strong></div>
+    <div class="md:col-span-2"><span class="text-gray-500">Endereço:</span> <strong>${emp.address||'—'}</strong></div>
+    <div><span class="text-gray-500">Função:</span> <strong>${emp.role_position||'—'}</strong></div>
+    <div><span class="text-gray-500">Setor:</span> <strong>${emp.department||'—'}</strong></div>
+    <div><span class="text-gray-500">Admissão:</span> <strong>${formatDate(emp.admission_date)}</strong></div>
+    <div><span class="text-gray-500">Status:</span> ${statusBadge(emp.status)}</div>
+    ${emp.notes?`<div class="md:col-span-2"><span class="text-gray-500">Obs:</span> <strong>${emp.notes}</strong></div>`:''}
+  </div>`;
+
+  let nrsHtml = `<div id="empTabNRs" class="hidden"><div class="table-container"><table><thead><tr><th>Treinamento</th><th>Código</th><th>Emissão</th><th>Validade</th><th>Status</th></tr></thead><tbody>`;
+  certs.forEach(c => {
+    const t = db.trainings.find(tr => tr.id === c.training_id);
+    const st = c.status === 'cancelado' ? 'cancelado' : calcStatus(c.expiration_date, alertDays);
+    nrsHtml += `<tr><td>${t?t.name:'N/A'}</td><td class="font-mono text-xs">${t?t.code:''}</td><td>${formatDate(c.issue_date)}</td><td>${formatDate(c.expiration_date)}</td><td>${statusBadge(st)}</td></tr>`;
+  });
+  nrsHtml += '</tbody></table></div></div>';
+
+  let asoHtml = `<div id="empTabASO" class="hidden"><div class="table-container"><table><thead><tr><th>Tipo</th><th>Emissão</th><th>Validade</th><th>Médico</th><th>Resultado</th></tr></thead><tbody>`;
+  asos.forEach(a => {
+    asoHtml += `<tr><td>${a.exam_type}</td><td>${formatDate(a.issue_date)}</td><td>${formatDate(a.expiration_date)}</td><td>${a.doctor_name}</td><td>${statusBadge(a.aptitude_result)}</td></tr>`;
+  });
+  asoHtml += '</tbody></table></div></div>';
+
+  let epiHtml = `<div id="empTabEPI" class="hidden"><div class="table-container"><table><thead><tr><th>EPI</th><th>CA</th><th>Qtd</th><th>Entrega</th><th>Troca Prevista</th></tr></thead><tbody>`;
+  epis.forEach(ep => {
+    epiHtml += `<tr><td>${ep.epi_name}</td><td>${ep.ca_number}</td><td>${ep.quantity}</td><td>${formatDate(ep.delivery_date)}</td><td>${formatDate(ep.replacement_date)}</td></tr>`;
+  });
+  epiHtml += '</tbody></table></div></div>';
+
+  let obrasHtml = `<div id="empTabObras" class="hidden"><div class="space-y-3">`;
+  projEmps.forEach(pe => {
+    const p = db.projects.find(pr => pr.id === pe.project_id);
+    if (p) {
+      const cl = db.clients.find(c => c.id === p.client_id);
+      obrasHtml += `<div class="flex items-center gap-4 p-3 bg-gray-50 rounded-xl"><div class="flex-1"><p class="font-semibold text-sm">${p.name}</p><p class="text-xs text-gray-400">${cl?cl.name:''} — ${pe.role_in_project}</p></div>${statusBadge(p.status)}</div>`;
+    }
+  });
+  if (projEmps.length === 0) obrasHtml += '<p class="text-gray-400 text-sm text-center py-4">Nenhuma obra vinculada</p>';
+  obrasHtml += '</div></div>';
+
+  openModal(`<div class="p-6">
+    <div class="flex items-center gap-4 mb-6">
+      <div class="w-14 h-14 rounded-2xl bg-imec-blue/10 flex items-center justify-center text-imec-blue font-bold text-lg">${emp.full_name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+      <div><h2 class="font-display text-xl font-bold text-imec-dark">${emp.full_name}</h2><p class="text-sm text-gray-500">${emp.role_position} — ${emp.department}</p></div>
+      <div class="ml-auto">${statusBadge(emp.status)}</div>
+    </div>
+    ${tabsHtml}${generalHtml}${nrsHtml}${asoHtml}${epiHtml}${obrasHtml}
+    <div class="flex justify-end mt-6"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div>
+  </div>`);
+}
+
+function switchEmpTab(el, tabId) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['empTabGeneral','empTabNRs','empTabASO','empTabEPI','empTabObras'].forEach(id => {
+    const tab = document.getElementById(id);
+    if (tab) tab.classList.toggle('hidden', id !== tabId);
+  });
+}
+
+// ==================== TABLE FILTERS ====================
+function filterTable(tableId, inputId) {
+  const filter = document.getElementById(inputId).value.toLowerCase();
+  const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+  rows.forEach(row => { row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none'; });
+}
+function filterTableByStatus(tableId, selectId, colIdx) {
+  const val = document.getElementById(selectId).value;
+  const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+  rows.forEach(row => {
+    if (!val) { row.style.display = ''; return; }
+    row.style.display = row.getAttribute('data-status') === val ? '' : 'none';
+  });
+}
+
+// ==================== DELETE RECORD ====================
+function deleteRecord(collection, id, name) {
+  if (!confirm('Tem certeza que deseja excluir "' + name + '"? Esta ação não pode ser desfeita.')) return;
+  const db = getDB();
+  db[collection] = db[collection].filter(r => r.id !== id);
+  saveDB(db);
+  addLog('delete', collection, id, collection + ' "' + name + '" excluído');
+  renderPage();
+  showToast('Registro excluído', 'success');
+}
+
+// ==================== TRAININGS ====================
+renderers.trainings = function() {
+  const db = getDB();
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar treinamento..." onkeyup="filterTable('trainTable','trainSearch')" id="trainSearch"></div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editTraining()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Novo Treinamento</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="trainTable"><thead><tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Carga Horária</th><th>Validade (meses)</th><th>Reciclagem</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+  db.trainings.forEach(t => {
+    html += `<tr><td><span class="font-mono text-sm font-semibold text-imec-blue">${t.code}</span></td><td class="font-semibold">${t.name}</td><td><span class="badge badge-blue">${t.category}</span></td><td>${t.default_workload}h</td><td>${t.default_validity_months || '—'}</td><td>${t.requires_recycling?'Sim':'Não'}</td><td>${statusBadge(t.status)}</td>
+    <td><div class="flex gap-1">${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editTraining('${t.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('trainings','${t.id}','${t.name}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editTraining(id) {
+  const db = getDB();
+  const t = id ? db.trainings.find(x => x.id === id) : null;
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${t?'Editar':'Novo'} Treinamento</h2>
+    <form onsubmit="saveTraining(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Nome *</label><input type="text" class="input" id="trName" value="${t?t.name:''}" required></div>
+        <div><label class="label">Código *</label><input type="text" class="input" id="trCode" value="${t?t.code:''}" required></div>
+        <div><label class="label">Categoria</label><select class="input" id="trCat"><option ${t&&t.category==='NR'?'selected':''}>NR</option><option ${t&&t.category==='Operação'?'selected':''}>Operação</option><option ${t&&t.category==='Técnico'?'selected':''}>Técnico</option><option ${t&&t.category==='Segurança'?'selected':''}>Segurança</option><option ${t&&t.category==='Outro'?'selected':''}>Outro</option></select></div>
+        <div><label class="label">Carga Horária (h)</label><input type="number" class="input" id="trWorkload" value="${t?t.default_workload:'16'}"></div>
+        <div><label class="label">Validade (meses)</label><input type="number" class="input" id="trValidity" value="${t?t.default_validity_months:'24'}"></div>
+        <div><label class="label">Exige Reciclagem</label><select class="input" id="trRecycling"><option value="true" ${t&&t.requires_recycling?'selected':''}>Sim</option><option value="false" ${t&&!t.requires_recycling?'selected':''}>Não</option></select></div>
+        <div class="md:col-span-2"><label class="label">Descrição</label><textarea class="input" rows="2" id="trDesc">${t?t.description:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveTraining(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {name:document.getElementById('trName').value,code:document.getElementById('trCode').value,category:document.getElementById('trCat').value,default_workload:parseInt(document.getElementById('trWorkload').value)||0,default_validity_months:parseInt(document.getElementById('trValidity').value)||0,requires_recycling:document.getElementById('trRecycling').value==='true',description:document.getElementById('trDesc').value,status:'ativo'};
+  if (id) { const idx = db.trainings.findIndex(x=>x.id===id); db.trainings[idx]={...db.trainings[idx],...data}; addLog('update','training',id,'Treinamento atualizado'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.trainings.push(data); addLog('create','training',data.id,'Treinamento '+data.name+' cadastrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Treinamento atualizado!':'Treinamento cadastrado!','success');
+}
+
+// ==================== CERTIFICATES ====================
+renderers.certificates = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 flex-1">
+      <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar certificado..." id="certSearch" onkeyup="filterTable('certTable','certSearch')"></div>
+      <select class="input w-auto" id="certStatusFilter" onchange="filterTableByStatus('certTable','certStatusFilter',6)"><option value="">Todos</option><option value="valido">Válido</option><option value="vencendo">Vencendo</option><option value="vencido">Vencido</option><option value="cancelado">Cancelado</option></select>
+    </div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editCertificate()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Novo Certificado</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="certTable"><thead><tr><th>Código</th><th>Funcionário</th><th>Treinamento</th><th>Emissão</th><th>Validade</th><th>Status</th><th data-col="6">Status Calc.</th><th>Ações</th></tr></thead><tbody>`;
+  db.certificates.forEach(c => {
+    const emp = db.employees.find(e=>e.id===c.employee_id);
+    const train = db.trainings.find(t=>t.id===c.training_id);
+    const st = c.status==='cancelado'?'cancelado':calcStatus(c.expiration_date,alertDays);
+    html += `<tr data-status="${st}">
+      <td class="font-mono text-xs font-semibold">${c.certificate_code}</td>
+      <td>${emp?emp.full_name:'N/A'}</td>
+      <td>${train?train.code+' — '+train.name:'N/A'}</td>
+      <td>${formatDate(c.issue_date)}</td>
+      <td>${formatDate(c.expiration_date)}</td>
+      <td>${c.status==='cancelado'?statusBadge('cancelado'):statusBadge(st)}</td>
+      <td>${statusBadge(st)}</td>
+      <td><div class="flex gap-1">
+        <button class="btn btn-outline btn-sm" onclick="showPublicVerification('${c.verification_token}')" title="Verificar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+        <button class="btn btn-outline btn-sm" onclick="showQRCode('${c.verification_token}','${c.certificate_code}')" title="QR Code"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg></button>
+        ${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editCertificate('${c.id}')" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+        ${canAdmin()&&c.status!=='cancelado'?`<button class="btn btn-sm text-imec-red" onclick="cancelCertificate('${c.id}')" title="Cancelar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></button>`:''}
+      </div></td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editCertificate(id) {
+  const db = getDB();
+  const c = id ? db.certificates.find(x=>x.id===id) : null;
+  const empOptions = db.employees.map(e=>`<option value="${e.id}" ${c&&c.employee_id===e.id?'selected':''}>${e.full_name}</option>`).join('');
+  const trainOptions = db.trainings.map(t=>`<option value="${t.id}" ${c&&c.training_id===t.id?'selected':''}>${t.code} — ${t.name}</option>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${c?'Editar':'Novo'} Certificado</h2>
+    <form onsubmit="saveCertificate(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Funcionário *</label><select class="input" id="certEmp" required>${empOptions}</select></div>
+        <div><label class="label">Treinamento *</label><select class="input" id="certTrain" required>${trainOptions}</select></div>
+        <div><label class="label">Data de Emissão *</label><input type="date" class="input" id="certIssue" value="${c?c.issue_date:today()}" required></div>
+        <div><label class="label">Data de Validade *</label><input type="date" class="input" id="certExp" value="${c?c.expiration_date:addMonths(today(),24)}" required></div>
+        <div><label class="label">Carga Horária (h)</label><input type="number" class="input" id="certWorkload" value="${c?c.workload:'16'}"></div>
+        <div><label class="label">Instrutor</label><input type="text" class="input" id="certInstructor" value="${c?c.instructor_name:''}"></div>
+        <div><label class="label">Empresa Emissora</label><input type="text" class="input" id="certIssuer" value="${c?c.issuer_company:getDB().settings.company_name}"></div>
+        <div><label class="label">Responsável Técnico</label><input type="text" class="input" id="certResp" value="${c?c.technical_responsible:getDB().settings.technical_responsible}"></div>
+        <div><label class="label">CREA</label><input type="text" class="input" id="certCREA" value="${c?c.crea_number:getDB().settings.crea_number}"></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="certNotes">${c?c.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveCertificate(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const empId = document.getElementById('certEmp').value;
+  const trainId = document.getElementById('certTrain').value;
+  const train = db.trainings.find(t=>t.id===trainId);
+  const data = {employee_id:empId,training_id:trainId,issue_date:document.getElementById('certIssue').value,expiration_date:document.getElementById('certExp').value,workload:parseInt(document.getElementById('certWorkload').value)||0,instructor_name:document.getElementById('certInstructor').value,issuer_company:document.getElementById('certIssuer').value,technical_responsible:document.getElementById('certResp').value,crea_number:document.getElementById('certCREA').value,notes:document.getElementById('certNotes').value};
+  if (id) {
+    const idx = db.certificates.findIndex(x=>x.id===id);
+    db.certificates[idx] = {...db.certificates[idx],...data,updated_at:new Date().toISOString()};
+    addLog('update','certificate',id,'Certificado atualizado');
+  } else {
+    data.id = genId();
+    data.verification_token = genToken();
+    const count = db.certificates.length + 1;
+    data.certificate_code = genCertCode(train?train.code:'CERT', count);
+    data.status = 'valido';
+    data.pdf_url = '';
+    data.card_image_url = '';
+    data.created_by = getSession().id;
+    data.created_at = new Date().toISOString();
+    db.certificates.push(data);
+    const emp = db.employees.find(e=>e.id===empId);
+    addLog('create','certificate',data.id,'Certificado '+data.certificate_code+' criado para '+(emp?emp.full_name:''));
+  }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Certificado atualizado!':'Certificado criado com sucesso!','success');
+}
+
+function cancelCertificate(id) {
+  if (!confirm('Tem certeza que deseja cancelar este certificado?')) return;
+  const db = getDB();
+  const idx = db.certificates.findIndex(c=>c.id===id);
+  db.certificates[idx].status = 'cancelado';
+  saveDB(db);
+  addLog('cancel','certificate',id,'Certificado '+db.certificates[idx].certificate_code+' cancelado');
+  renderPage();
+  showToast('Certificado cancelado','warning');
+}
+
+function showQRCode(token, code) {
+  const url = window.location.origin + window.location.pathname + '#/verificar/' + token;
+  openModal(`<div class="p-6 text-center"><h2 class="font-display text-xl font-bold text-imec-dark mb-2">QR Code de Autenticidade</h2><p class="text-sm text-gray-500 mb-4">${code}</p><div id="qrCanvas" class="flex justify-center mb-4"></div><p class="text-xs text-gray-400 mb-2">${url}</p><p class="text-xs text-gray-400 italic mt-4">"Este documento possui autenticação digital por QR Code."</p><div class="flex justify-center gap-3 mt-4"><button class="btn btn-outline btn-sm" onclick="closeModal()">Fechar</button></div></div>`);
+  setTimeout(() => {
+    const canvas = document.getElementById('qrCanvas');
+    if (canvas) QRCode.toCanvas(url, {width:200,margin:2}, function(err, cvs) {
+      if (!err && canvas) canvas.appendChild(cvs);
+    });
+  }, 100);
+}
+
+// ==================== ID CARDS ====================
+renderers.idcards = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex items-center justify-between mb-6"><h3 class="font-display text-lg font-bold text-imec-dark">Carteirinhas Digitais</h3>${canEdit()?'<button class="btn btn-primary" onclick="generateIdCard()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Gerar Carteirinha</button>':''}</div>`;
+  html += '<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">';
+  db.certificates.filter(c=>c.status!=='cancelado').forEach(c => {
+    const emp = db.employees.find(e=>e.id===c.employee_id);
+    const train = db.trainings.find(t=>t.id===c.training_id);
+    if (!emp || !train) return;
+    const st = calcStatus(c.expiration_date, alertDays);
+    html += `<div class="id-card">
+      <div class="id-card-header"><div class="flex items-center justify-between"><div><p class="text-xs text-blue-200/70">IMEC Compliance Industrial</p><p class="font-display font-bold text-sm">Carteira de Qualificação</p></div><div class="text-right"><p class="text-xs text-blue-200/60">${st==='valido'?'VÁLIDA':st==='vencendo'?'VENCENDO':'VENCIDA'}</p></div></div></div>
+      <div class="id-card-body">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="w-12 h-12 rounded-lg bg-imec-blue/10 flex items-center justify-center text-imec-blue font-bold text-sm flex-shrink-0">${emp.full_name.split(' ').map(w=>w[0]).join('').substring(0,2)}</div>
+          <div class="min-w-0"><p class="font-bold text-sm text-gray-800 truncate">${emp.full_name}</p><p class="text-xs text-gray-500">${emp.role_position}</p></div>
+        </div>
+        <div class="text-xs space-y-1">
+          <div class="flex justify-between"><span class="text-gray-500">Treinamento:</span><span class="font-semibold">${train.code}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Validade:</span><span class="font-semibold">${formatDate(c.expiration_date)}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Código:</span><span class="font-mono text-[10px]">${c.certificate_code}</span></div>
+        </div>
+        <div class="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
+          <p class="text-[9px] text-gray-400 italic leading-tight">Autenticação por QR Code</p>
+          <div class="w-10 h-10 bg-gray-100 rounded flex items-center justify-center cursor-pointer" onclick="showQRCode('${c.verification_token}','${c.certificate_code}')" title="Ver QR Code"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+};
+
+function generateIdCard() {
+  const db = getDB();
+  const empOptions = db.employees.map(e=>`<option value="${e.id}">${e.full_name}</option>`).join('');
+  const certOptions = db.certificates.filter(c=>c.status!=='cancelado').map(c=>{const e=db.employees.find(x=>x.id===c.employee_id);const t=db.trainings.find(x=>x.id===c.training_id);return `<option value="${c.id}">${e?e.full_name:''} — ${t?t.code:''}</option>`;}).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">Gerar Carteirinha</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div><label class="label">Selecione o Certificado</label><select class="input" id="idCardCert">${certOptions}</select></div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="closeModal();showToast('Carteirinha gerada com sucesso!','success')">Gerar</button></div>
+  </div>`);
+}
+
+// ==================== ASO ====================
+renderers.aso = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar ASO..." id="asoSearch" onkeyup="filterTable('asoTable','asoSearch')"></div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editASO()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Novo ASO</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="asoTable"><thead><tr><th>Funcionário</th><th>Tipo</th><th>Emissão</th><th>Validade</th><th>Médico</th><th>CRM</th><th>Resultado</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+  db.medical_exams.forEach(m => {
+    const emp = db.employees.find(e=>e.id===m.employee_id);
+    const st = calcStatus(m.expiration_date, alertDays);
+    html += `<tr data-status="${st}"><td>${emp?emp.full_name:'N/A'}</td><td>${m.exam_type}</td><td>${formatDate(m.issue_date)}</td><td>${formatDate(m.expiration_date)}</td><td>${m.doctor_name}</td><td>${m.crm}</td><td>${statusBadge(m.aptitude_result)}</td><td>${statusBadge(st)}</td>
+    <td><div class="flex gap-1">${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editASO('${m.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('medical_exams','${m.id}','ASO de ${emp?emp.full_name:''}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editASO(id) {
+  const db = getDB();
+  const m = id ? db.medical_exams.find(x=>x.id===id) : null;
+  const empOptions = db.employees.map(e=>`<option value="${e.id}" ${m&&m.employee_id===e.id?'selected':''}>${e.full_name}</option>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${m?'Editar':'Novo'} ASO</h2>
+    <form onsubmit="saveASO(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Funcionário *</label><select class="input" id="asoEmp" required>${empOptions}</select></div>
+        <div><label class="label">Tipo *</label><select class="input" id="asoType" required><option value="admissional" ${m&&m.exam_type==='admissional'?'selected':''}>Admissional</option><option value="periódico" ${m&&m.exam_type==='periódico'?'selected':''}>Periódico</option><option value="mudança de função" ${m&&m.exam_type==='mudança de função'?'selected':''}>Mudança de Função</option><option value="retorno ao trabalho" ${m&&m.exam_type==='retorno ao trabalho'?'selected':''}>Retorno ao Trabalho</option><option value="demissional" ${m&&m.exam_type==='demissional'?'selected':''}>Demissional</option></select></div>
+        <div><label class="label">Data de Emissão</label><input type="date" class="input" id="asoIssue" value="${m?m.issue_date:today()}"></div>
+        <div><label class="label">Data de Validade</label><input type="date" class="input" id="asoExp" value="${m?m.expiration_date:addMonths(today(),12)}"></div>
+        <div><label class="label">Médico Responsável</label><input type="text" class="input" id="asoDoctor" value="${m?m.doctor_name:''}"></div>
+        <div><label class="label">CRM</label><input type="text" class="input" id="asoCRM" value="${m?m.crm:''}"></div>
+        <div><label class="label">Função Apta</label><input type="text" class="input" id="asoRole" value="${m?m.role_position:''}"></div>
+        <div><label class="label">Resultado</label><select class="input" id="asoResult"><option value="apto" ${m&&m.aptitude_result==='apto'?'selected':''}>Apto</option><option value="inapto_result" ${m&&m.aptitude_result==='inapto'?'selected':''}>Inapto</option><option value="apto_restricao" ${m&&m.aptitude_result==='apto_restricao'?'selected':''}>Apto com Restrição</option></select></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="asoNotes">${m?m.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveASO(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {employee_id:document.getElementById('asoEmp').value,exam_type:document.getElementById('asoType').value,issue_date:document.getElementById('asoIssue').value,expiration_date:document.getElementById('asoExp').value,doctor_name:document.getElementById('asoDoctor').value,crm:document.getElementById('asoCRM').value,role_position:document.getElementById('asoRole').value,aptitude_result:document.getElementById('asoResult').value,notes:document.getElementById('asoNotes').value,pdf_url:''};
+  if (id) { const idx=db.medical_exams.findIndex(x=>x.id===id); db.medical_exams[idx]={...db.medical_exams[idx],...data}; addLog('update','medical_exam',id,'ASO atualizado'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.medical_exams.push(data); addLog('create','medical_exam',data.id,'ASO cadastrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'ASO atualizado!':'ASO cadastrado!','success');
+}
+
+// ==================== EPI ====================
+renderers.epi = function() {
+  const db = getDB();
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar EPI..." id="epiSearch" onkeyup="filterTable('epiTable','epiSearch')"></div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editEPI()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Nova Entrega de EPI</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="epiTable"><thead><tr><th>Funcionário</th><th>EPI</th><th>CA</th><th>Qtd</th><th>Entrega</th><th>Troca Prevista</th><th>Ações</th></tr></thead><tbody>`;
+  db.epi_records.forEach(ep => {
+    const emp = db.employees.find(e=>e.id===ep.employee_id);
+    html += `<tr><td>${emp?emp.full_name:'N/A'}</td><td>${ep.epi_name}</td><td>${ep.ca_number}</td><td>${ep.quantity}</td><td>${formatDate(ep.delivery_date)}</td><td>${formatDate(ep.replacement_date)}</td>
+    <td><div class="flex gap-1">${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editEPI('${ep.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('epi_records','${ep.id}','${ep.epi_name}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editEPI(id) {
+  const db = getDB();
+  const ep = id ? db.epi_records.find(x=>x.id===id) : null;
+  const empOptions = db.employees.map(e=>`<option value="${e.id}" ${ep&&ep.employee_id===e.id?'selected':''}>${e.full_name}</option>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${ep?'Editar':'Nova'} Entrega de EPI</h2>
+    <form onsubmit="saveEPI(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Funcionário *</label><select class="input" id="epiEmp" required>${empOptions}</select></div>
+        <div><label class="label">Nome do EPI *</label><input type="text" class="input" id="epiName" value="${ep?ep.epi_name:''}" required list="epiList"><datalist id="epiList"><option value="Capacete de Segurança"><option value="Botina de Segurança"><option value="Luva de Raspa"><option value="Óculos de Proteção"><option value="Protetor Auricular"><option value="Cinto de Segurança Tipo Paraquedista"><option value="Talabarte"><option value="Avental de Raspa"><option value="Mangote"><option value="Máscara de Solda"></datalist></div>
+        <div><label class="label">CA</label><input type="text" class="input" id="epiCA" value="${ep?ep.ca_number:''}"></div>
+        <div><label class="label">Quantidade</label><input type="number" class="input" id="epiQty" value="${ep?ep.quantity:1}" min="1"></div>
+        <div><label class="label">Data de Entrega</label><input type="date" class="input" id="epiDelivery" value="${ep?ep.delivery_date:today()}"></div>
+        <div><label class="label">Data Prevista de Troca</label><input type="date" class="input" id="epiReplacement" value="${ep?ep.replacement_date:addMonths(today(),12)}"></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="epiNotes">${ep?ep.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveEPI(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {employee_id:document.getElementById('epiEmp').value,epi_name:document.getElementById('epiName').value,ca_number:document.getElementById('epiCA').value,quantity:parseInt(document.getElementById('epiQty').value)||1,delivery_date:document.getElementById('epiDelivery').value,replacement_date:document.getElementById('epiReplacement').value,notes:document.getElementById('epiNotes').value,attachment_url:''};
+  if (id) { const idx=db.epi_records.findIndex(x=>x.id===id); db.epi_records[idx]={...db.epi_records[idx],...data}; }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.epi_records.push(data); addLog('create','epi_record',data.id,'EPI '+data.epi_name+' registrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'EPI atualizado!':'EPI registrado!','success');
+}
+
+// ==================== EQUIPMENT ====================
+renderers.equipment = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 flex-1">
+      <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar equipamento..." id="eqSearch" onkeyup="filterTable('eqTable','eqSearch')"></div>
+      <select class="input w-auto" id="eqTypeFilter" onchange="filterEqType()"><option value="">Todos os Tipos</option><option>Caminhão Munck</option><option>Guindaste</option><option>Plataforma elevatória</option><option>Talha</option><option>Ponte rolante</option><option>Andaime</option><option>Linha de vida</option><option>Cinta de elevação</option><option>Cabo de aço</option><option>Outro</option></select>
+    </div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editEquipment()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Novo Equipamento</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="eqTable"><thead><tr><th>Nome</th><th>Tipo</th><th>Marca/Modelo</th><th>Nº Série</th><th>Capacidade</th><th>Status</th><th>Documentos</th><th>Ações</th></tr></thead><tbody>`;
+  db.equipment.forEach(eq => {
+    const docs = db.equipment_documents.filter(d=>d.equipment_id===eq.id);
+    const expiredDocs = docs.filter(d=>calcStatus(d.expiration_date,alertDays)==='vencido').length;
+    html += `<tr data-type="${eq.type}"><td><p class="font-semibold">${eq.name}</p><p class="text-xs text-gray-400">Patrimônio: ${eq.asset_number}</p></td><td><span class="badge badge-blue">${eq.type}</span></td><td>${eq.brand} ${eq.model}</td><td class="font-mono text-xs">${eq.serial_number}</td><td>${eq.capacity}</td><td>${statusBadge(eq.status)}</td><td><span class="text-sm">${docs.length} docs</span>${expiredDocs>0?` <span class="badge badge-red text-xs">${expiredDocs} venc.</span>`:''}</td>
+    <td><div class="flex gap-1">
+      <button class="btn btn-outline btn-sm" onclick="viewEquipmentDocs('${eq.id}')" title="Documentos"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></button>
+      ${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editEquipment('${eq.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+      ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('equipment','${eq.id}','${eq.name}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}
+    </div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function filterEqType() {
+  const val = document.getElementById('eqTypeFilter').value;
+  document.getElementById('eqTable').querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = !val || row.getAttribute('data-type') === val ? '' : 'none';
+  });
+}
+
+function editEquipment(id) {
+  const db = getDB();
+  const eq = id ? db.equipment.find(x=>x.id===id) : null;
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${eq?'Editar':'Novo'} Equipamento</h2>
+    <form onsubmit="saveEquipment(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Nome *</label><input type="text" class="input" id="eqName" value="${eq?eq.name:''}" required></div>
+        <div><label class="label">Tipo *</label><select class="input" id="eqType" required><option ${eq&&eq.type==='Caminhão Munck'?'selected':''}>Caminhão Munck</option><option ${eq&&eq.type==='Guindaste'?'selected':''}>Guindaste</option><option ${eq&&eq.type==='Plataforma elevatória'?'selected':''}>Plataforma elevatória</option><option ${eq&&eq.type==='Talha'?'selected':''}>Talha</option><option ${eq&&eq.type==='Ponte rolante'?'selected':''}>Ponte rolante</option><option ${eq&&eq.type==='Andaime'?'selected':''}>Andaime</option><option ${eq&&eq.type==='Linha de vida'?'selected':''}>Linha de vida</option><option ${eq&&eq.type==='Cinta de elevação'?'selected':''}>Cinta de elevação</option><option ${eq&&eq.type==='Cabo de aço'?'selected':''}>Cabo de aço</option><option ${eq&&eq.type==='Outro'?'selected':''}>Outro</option></select></div>
+        <div><label class="label">Marca</label><input type="text" class="input" id="eqBrand" value="${eq?eq.brand:''}"></div>
+        <div><label class="label">Modelo</label><input type="text" class="input" id="eqModel" value="${eq?eq.model:''}"></div>
+        <div><label class="label">Nº de Série</label><input type="text" class="input" id="eqSerial" value="${eq?eq.serial_number:''}"></div>
+        <div><label class="label">Patrimônio</label><input type="text" class="input" id="eqAsset" value="${eq?eq.asset_number:''}"></div>
+        <div><label class="label">Placa</label><input type="text" class="input" id="eqPlate" value="${eq?eq.plate:''}"></div>
+        <div><label class="label">Ano</label><input type="text" class="input" id="eqYear" value="${eq?eq.year:''}"></div>
+        <div><label class="label">Capacidade Nominal</label><input type="text" class="input" id="eqCapacity" value="${eq?eq.capacity:''}"></div>
+        <div><label class="label">Proprietário</label><input type="text" class="input" id="eqOwner" value="${eq?eq.owner:''}"></div>
+        <div><label class="label">Status</label><select class="input" id="eqStatus"><option value="ativo" ${eq&&eq.status==='ativo'?'selected':''}>Ativo</option><option value="manutencao" ${eq&&eq.status==='manutencao'?'selected':''}>Manutenção</option><option value="inativo" ${eq&&eq.status==='inativo'?'selected':''}>Inativo</option></select></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="eqNotes">${eq?eq.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveEquipment(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {name:document.getElementById('eqName').value,type:document.getElementById('eqType').value,brand:document.getElementById('eqBrand').value,model:document.getElementById('eqModel').value,serial_number:document.getElementById('eqSerial').value,asset_number:document.getElementById('eqAsset').value,plate:document.getElementById('eqPlate').value,year:document.getElementById('eqYear').value,capacity:document.getElementById('eqCapacity').value,owner:document.getElementById('eqOwner').value,status:document.getElementById('eqStatus').value,notes:document.getElementById('eqNotes').value,photo_url:''};
+  if (id) { const idx=db.equipment.findIndex(x=>x.id===id); db.equipment[idx]={...db.equipment[idx],...data}; addLog('update','equipment',id,'Equipamento atualizado'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.equipment.push(data); addLog('create','equipment',data.id,'Equipamento '+data.name+' cadastrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Equipamento atualizado!':'Equipamento cadastrado!','success');
+}
+
+function viewEquipmentDocs(eqId) {
+  const db = getDB();
+  const eq = db.equipment.find(x=>x.id===eqId);
+  const docs = db.equipment_documents.filter(d=>d.equipment_id===eqId);
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let docsHtml = docs.map(d => {
+    const st = calcStatus(d.expiration_date, alertDays);
+    return `<tr><td>${d.document_type}</td><td>${d.title}</td><td>${d.document_number}</td><td>${formatDate(d.issue_date)}</td><td>${formatDate(d.expiration_date)}</td><td>${d.responsible_name}</td><td>${statusBadge(st)}</td></tr>`;
+  }).join('');
+  openModal(`<div class="p-6"><div class="flex items-center justify-between mb-6"><h2 class="font-display text-xl font-bold text-imec-dark">Documentos — ${eq.name}</h2>${canEdit()?`<button class="btn btn-primary btn-sm" onclick="closeModal();editEquipmentDoc('${eqId}')">+ Novo Documento</button>`:''}</div>
+    <div class="table-container"><table><thead><tr><th>Tipo</th><th>Título</th><th>Nº</th><th>Emissão</th><th>Validade</th><th>Responsável</th><th>Status</th></tr></thead><tbody>${docsHtml||'<tr><td colspan="7" class="text-center text-gray-400 py-4">Nenhum documento cadastrado</td></tr>'}</tbody></table></div>
+    <div class="flex justify-end mt-6"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div></div>`);
+}
+
+function editEquipmentDoc(eqId) {
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">Novo Documento — Equipamento</h2>
+    <form onsubmit="saveEquipmentDoc(event,'${eqId}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Tipo do Documento</label><select class="input" id="edType"><option>Laudo Técnico</option><option>ART</option><option>Tabela de Carga</option><option>Manual</option><option>Checklist</option><option>Certificado de Calibração</option><option>Inspeção Periódica</option><option>Outro</option></select></div>
+        <div><label class="label">Título</label><input type="text" class="input" id="edTitle" required></div>
+        <div><label class="label">Número</label><input type="text" class="input" id="edNumber"></div>
+        <div><label class="label">Data de Emissão</label><input type="date" class="input" id="edIssue" value="${today()}"></div>
+        <div><label class="label">Data de Validade</label><input type="date" class="input" id="edExp" value="${addMonths(today(),12)}"></div>
+        <div><label class="label">Responsável Técnico</label><input type="text" class="input" id="edResp" value="${getDB().settings.technical_responsible}"></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveEquipmentDoc(e, eqId) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {id:genId(),equipment_id:eqId,document_type:document.getElementById('edType').value,title:document.getElementById('edTitle').value,document_number:document.getElementById('edNumber').value,issue_date:document.getElementById('edIssue').value,expiration_date:document.getElementById('edExp').value,responsible_name:document.getElementById('edResp').value,file_url:'',status:'valido',notes:'',created_at:new Date().toISOString()};
+  db.equipment_documents.push(data);
+  saveDB(db); closeModal(); renderPage(); showToast('Documento cadastrado!','success');
+  addLog('create','equipment_document',data.id,'Documento de equipamento cadastrado');
+}
+
+// ==================== CRANES ====================
+renderers.cranes = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  const cranes = db.equipment.filter(e => e.type === 'Guindaste' || e.type === 'Caminhão Munck');
+  let html = `<div class="flex items-center justify-between mb-6"><h3 class="font-display text-lg font-bold text-imec-dark">Guindastes e Caminhões Munck</h3>${canEdit()?'<button class="btn btn-primary" onclick="editEquipment()">+ Novo Equipamento</button>':''}</div>`;
+  html += '<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">';
+  cranes.forEach(cr => {
+    const docs = db.equipment_documents.filter(d=>d.equipment_id===cr.id);
+    const expiredDocs = docs.filter(d=>calcStatus(d.expiration_date,alertDays)==='vencido').length;
+    const laudo = docs.find(d=>d.document_type==='Laudo Técnico');
+    const laudoStatus = laudo ? calcStatus(laudo.expiration_date, alertDays) : 'vencido';
+    html += `<div class="card overflow-hidden">
+      <div class="bg-gradient-to-r from-imec-dark to-imec-blue p-4 text-white">
+        <div class="flex items-center justify-between"><h4 class="font-display font-bold">${cr.name}</h4><span class="badge ${cr.status==='ativo'?'badge-green':'badge-orange'}">${cr.status}</span></div>
+        <p class="text-blue-200/70 text-sm mt-1">${cr.type}</p>
+      </div>
+      <div class="p-4 space-y-3 text-sm">
+        <div class="flex justify-between"><span class="text-gray-500">Marca/Modelo:</span><span class="font-semibold">${cr.brand} ${cr.model}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Capacidade:</span><span class="font-semibold">${cr.capacity}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Placa:</span><span class="font-semibold">${cr.plate||'—'}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Ano:</span><span class="font-semibold">${cr.year}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Laudo:</span>${statusBadge(laudoStatus)}</div>
+        <div class="flex justify-between"><span class="text-gray-500">Documentos:</span><span>${docs.length} (${expiredDocs>0?'<span class=text-imec-red>'+expiredDocs+' venc.</span>':'todos válidos'})</span></div>
+      </div>
+      <div class="px-4 pb-4 flex gap-2">
+        <button class="btn btn-outline btn-sm flex-1" onclick="viewEquipmentDocs('${cr.id}')">Documentos</button>
+        ${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editEquipment('${cr.id}')">Editar</button>`:''}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+};
+
+// ==================== CLIENTS ====================
+renderers.clients = function() {
+  const db = getDB();
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar cliente..." id="clientSearch" onkeyup="filterTable('clientTable','clientSearch')"></div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editClient()">+ Novo Cliente</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="clientTable"><thead><tr><th>Nome</th><th>CNPJ</th><th>Contato</th><th>Telefone</th><th>Cidade/UF</th><th>Ações</th></tr></thead><tbody>`;
+  db.clients.forEach(c => {
+    html += `<tr><td class="font-semibold">${c.name}</td><td class="font-mono text-sm">${c.cnpj}</td><td>${c.contact_name}</td><td>${c.phone}</td><td>${c.city}/${c.state}</td>
+    <td><div class="flex gap-1">${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editClient('${c.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('clients','${c.id}','${c.name}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editClient(id) {
+  const db = getDB();
+  const c = id ? db.clients.find(x=>x.id===id) : null;
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${c?'Editar':'Novo'} Cliente</h2>
+    <form onsubmit="saveClient(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Nome *</label><input type="text" class="input" id="clName" value="${c?c.name:''}" required></div>
+        <div><label class="label">CNPJ</label><input type="text" class="input" id="clCNPJ" value="${c?c.cnpj:''}"></div>
+        <div><label class="label">Contato Principal</label><input type="text" class="input" id="clContact" value="${c?c.contact_name:''}"></div>
+        <div><label class="label">Telefone</label><input type="text" class="input" id="clPhone" value="${c?c.phone:''}"></div>
+        <div><label class="label">E-mail</label><input type="email" class="input" id="clEmail" value="${c?c.email:''}"></div>
+        <div><label class="label">Endereço</label><input type="text" class="input" id="clAddress" value="${c?c.address:''}"></div>
+        <div><label class="label">Cidade</label><input type="text" class="input" id="clCity" value="${c?c.city:''}"></div>
+        <div><label class="label">Estado</label><input type="text" class="input" id="clState" value="${c?c.state:''}" maxlength="2"></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="clNotes">${c?c.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveClient(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {name:document.getElementById('clName').value,cnpj:document.getElementById('clCNPJ').value,contact_name:document.getElementById('clContact').value,phone:document.getElementById('clPhone').value,email:document.getElementById('clEmail').value,address:document.getElementById('clAddress').value,city:document.getElementById('clCity').value,state:document.getElementById('clState').value,notes:document.getElementById('clNotes').value};
+  if (id) { const idx=db.clients.findIndex(x=>x.id===id); db.clients[idx]={...db.clients[idx],...data}; addLog('update','client',id,'Cliente atualizado'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.clients.push(data); addLog('create','client',data.id,'Cliente '+data.name+' cadastrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Cliente atualizado!':'Cliente cadastrado!','success');
+}
+
+// ==================== PROJECTS ====================
+renderers.projects = function() {
+  const db = getDB();
+  const session = getSession();
+  let projects = db.projects;
+  if (session.role === 'client') { projects = projects.filter(p => p.client_id === session.client_id); }
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 flex-1">
+      <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar obra..." id="projSearch" onkeyup="filterTable('projTable','projSearch')"></div>
+      <select class="input w-auto" id="projStatusFilter" onchange="filterTableByStatus('projTable','projStatusFilter',4)"><option value="">Todos</option><option value="planejada">Planejada</option><option value="em_andamento">Em Andamento</option><option value="concluida">Concluída</option><option value="paralisada">Paralisada</option></select>
+    </div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editProject()">+ Nova Obra</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="projTable"><thead><tr><th>Obra</th><th>Cliente</th><th>Local</th><th>Período</th><th>Status</th><th>Equipe</th><th>Ações</th></tr></thead><tbody>`;
+  projects.forEach(p => {
+    const client = db.clients.find(c=>c.id===p.client_id);
+    const emps = db.project_employees.filter(pe=>pe.project_id===p.id);
+    html += `<tr data-status="${p.status}"><td><p class="font-semibold">${p.name}</p><p class="text-xs text-gray-400">${p.service_description?p.service_description.substring(0,60)+'...':''}</p></td><td>${client?client.name:'N/A'}</td><td class="text-sm">${p.location}</td><td class="text-sm">${formatDate(p.start_date)} — ${formatDate(p.expected_end_date)}</td><td>${statusBadge(p.status)}</td><td><span class="text-sm">${emps.length} func.</span></td>
+    <td><div class="flex gap-1">
+      <button class="btn btn-outline btn-sm" onclick="viewProject('${p.id}')" title="Detalhes"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+      ${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editProject('${p.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    </div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editProject(id) {
+  const db = getDB();
+  const p = id ? db.projects.find(x=>x.id===id) : null;
+  const clientOptions = db.clients.map(c=>`<option value="${c.id}" ${p&&p.client_id===c.id?'selected':''}>${c.name}</option>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${p?'Editar':'Nova'} Obra</h2>
+    <form onsubmit="saveProject(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="md:col-span-2"><label class="label">Nome da Obra *</label><input type="text" class="input" id="pName" value="${p?p.name:''}" required></div>
+        <div><label class="label">Cliente *</label><select class="input" id="pClient" required>${clientOptions}</select></div>
+        <div><label class="label">Local</label><input type="text" class="input" id="pLocation" value="${p?p.location:''}"></div>
+        <div><label class="label">Data de Início</label><input type="date" class="input" id="pStart" value="${p?p.start_date:today()}"></div>
+        <div><label class="label">Previsão de Término</label><input type="date" class="input" id="pEnd" value="${p?p.expected_end_date:addMonths(today(),6)}"></div>
+        <div><label class="label">Status</label><select class="input" id="pStatus"><option value="planejada" ${p&&p.status==='planejada'?'selected':''}>Planejada</option><option value="em_andamento" ${p&&p.status==='em_andamento'?'selected':''}>Em Andamento</option><option value="concluida" ${p&&p.status==='concluida'?'selected':''}>Concluída</option><option value="paralisada" ${p&&p.status==='paralisada'?'selected':''}>Paralisada</option><option value="cancelada" ${p&&p.status==='cancelada'?'selected':''}>Cancelada</option></select></div>
+        <div><label class="label">Responsável Técnico</label><input type="text" class="input" id="pResp" value="${p?p.technical_responsible:getDB().settings.technical_responsible}"></div>
+        <div class="md:col-span-2"><label class="label">Descrição do Serviço</label><textarea class="input" rows="3" id="pDesc">${p?p.service_description:''}</textarea></div>
+        <div class="md:col-span-2"><label class="label">Observações</label><textarea class="input" rows="2" id="pNotes">${p?p.notes:''}</textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveProject(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {name:document.getElementById('pName').value,client_id:document.getElementById('pClient').value,location:document.getElementById('pLocation').value,start_date:document.getElementById('pStart').value,expected_end_date:document.getElementById('pEnd').value,status:document.getElementById('pStatus').value,technical_responsible:document.getElementById('pResp').value,service_description:document.getElementById('pDesc').value,notes:document.getElementById('pNotes').value};
+  if (id) { const idx=db.projects.findIndex(x=>x.id===id); db.projects[idx]={...db.projects[idx],...data}; addLog('update','project',id,'Obra atualizada'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.projects.push(data); addLog('create','project',data.id,'Obra '+data.name+' cadastrada'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Obra atualizada!':'Obra cadastrada!','success');
+}
+
+function viewProject(id) {
+  const db = getDB();
+  const p = db.projects.find(x=>x.id===id);
+  if (!p) return;
+  const client = db.clients.find(c=>c.id===p.client_id);
+  const emps = db.project_employees.filter(pe=>pe.project_id===id);
+  const eqs = db.project_equipment.filter(pq=>pq.project_id===id);
+  const docs = db.technical_documents.filter(td=>td.project_id===id);
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-2">${p.name}</h2><p class="text-sm text-gray-500 mb-6">${client?client.name:''} — ${p.location}</p>
+    <div class="grid md:grid-cols-3 gap-4 mb-6 text-sm">
+      <div class="bg-gray-50 rounded-xl p-4"><p class="text-gray-500 text-xs">Status</p><p class="mt-1">${statusBadge(p.status)}</p></div>
+      <div class="bg-gray-50 rounded-xl p-4"><p class="text-gray-500 text-xs">Período</p><p class="mt-1 font-semibold">${formatDate(p.start_date)} — ${formatDate(p.expected_end_date)}</p></div>
+      <div class="bg-gray-50 rounded-xl p-4"><p class="text-gray-500 text-xs">Resp. Técnico</p><p class="mt-1 font-semibold">${p.technical_responsible}</p></div>
+    </div>
+    <div class="mb-4"><h4 class="font-semibold text-sm mb-2">Equipe (${emps.length})</h4><div class="space-y-1">${emps.map(pe=>{const e=db.employees.find(x=>x.id===pe.employee_id);return e?`<div class="flex items-center gap-2 text-sm"><span class="w-2 h-2 rounded-full bg-imec-blue"></span>${e.full_name} <span class="text-gray-400">— ${pe.role_in_project}</span></div>`:'';}).join('')||'<p class="text-gray-400 text-sm">Nenhum funcionário vinculado</p>'}</div></div>
+    <div class="mb-4"><h4 class="font-semibold text-sm mb-2">Equipamentos (${eqs.length})</h4><div class="space-y-1">${eqs.map(pq=>{const eq=db.equipment.find(x=>x.id===pq.equipment_id);return eq?`<div class="flex items-center gap-2 text-sm"><span class="w-2 h-2 rounded-full bg-imec-orange"></span>${eq.name}</div>`:'';}).join('')||'<p class="text-gray-400 text-sm">Nenhum equipamento vinculado</p>'}</div></div>
+    <div><h4 class="font-semibold text-sm mb-2">Documentos Técnicos (${docs.length})</h4><div class="space-y-1">${docs.map(d=>`<div class="flex items-center gap-2 text-sm"><span class="w-2 h-2 rounded-full bg-imec-green"></span>${d.document_type} — ${d.title} ${statusBadge(d.status)}</div>`).join('')||'<p class="text-gray-400 text-sm">Nenhum documento</p>'}</div></div>
+    <div class="flex justify-end mt-6"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div></div>`);
+}
+
+// ==================== TECHNICAL DOCUMENTS ====================
+renderers.documents = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-3 flex-1">
+      <div class="search-box flex-1 max-w-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="input" placeholder="Buscar documento..." id="docSearch" onkeyup="filterTable('docTable','docSearch')"></div>
+      <select class="input w-auto" id="docTypeFilter" onchange="filterDocType()"><option value="">Todos os Tipos</option><option>ART</option><option>APR</option><option>Plano de Rigging</option><option>Memorial de cálculo</option><option>Laudo técnico</option><option>Relatório fotográfico</option><option>Prontuário NR-13</option><option>Outro</option></select>
+    </div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editDocument()">+ Novo Documento</button>':''}
+  </div>`;
+  html += `<div class="table-container"><table id="docTable"><thead><tr><th>Tipo</th><th>Nº</th><th>Título</th><th>Cliente</th><th>Obra</th><th>Responsável</th><th>Validade</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+  db.technical_documents.forEach(d => {
+    const client = db.clients.find(c=>c.id===d.client_id);
+    const project = db.projects.find(p=>p.id===d.project_id);
+    const st = d.expiration_date ? calcStatus(d.expiration_date, alertDays) : 'valido';
+    html += `<tr data-type="${d.document_type}"><td><span class="badge badge-blue">${d.document_type}</span></td><td class="font-mono text-xs">${d.document_number}</td><td class="font-semibold text-sm">${d.title}</td><td>${client?client.name:'—'}</td><td>${project?project.name:'—'}</td><td>${d.responsible_name}</td><td>${d.expiration_date?formatDate(d.expiration_date):'—'}</td><td>${statusBadge(st)}</td>
+    <td><div class="flex gap-1">${canEdit()?`<button class="btn btn-outline btn-sm" onclick="editDocument('${d.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('technical_documents','${d.id}','${d.title}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function filterDocType() {
+  const val = document.getElementById('docTypeFilter').value;
+  document.getElementById('docTable').querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = !val || row.getAttribute('data-type') === val ? '' : 'none';
+  });
+}
+
+function editDocument(id) {
+  const db = getDB();
+  const d = id ? db.technical_documents.find(x=>x.id===id) : null;
+  const clientOptions = '<option value="">—</option>' + db.clients.map(c=>`<option value="${c.id}" ${d&&d.client_id===c.id?'selected':''}>${c.name}</option>`).join('');
+  const projOptions = '<option value="">—</option>' + db.projects.map(p=>`<option value="${p.id}" ${d&&d.project_id===p.id?'selected':''}>${p.name}</option>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${d?'Editar':'Novo'} Documento Técnico</h2>
+    <form onsubmit="saveDocument(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Tipo *</label><select class="input" id="dType" required><option ${d&&d.document_type==='ART'?'selected':''}>ART</option><option ${d&&d.document_type==='APR'?'selected':''}>APR</option><option ${d&&d.document_type==='Plano de Rigging'?'selected':''}>Plano de Rigging</option><option ${d&&d.document_type==='Memorial de cálculo'?'selected':''}>Memorial de cálculo</option><option ${d&&d.document_type==='Laudo técnico'?'selected':''}>Laudo técnico</option><option ${d&&d.document_type==='Relatório fotográfico'?'selected':''}>Relatório fotográfico</option><option ${d&&d.document_type==='Prontuário NR-13'?'selected':''}>Prontuário NR-13</option><option ${d&&d.document_type==='Outro'?'selected':''}>Outro</option></select></div>
+        <div><label class="label">Número</label><input type="text" class="input" id="dNumber" value="${d?d.document_number:''}"></div>
+        <div class="md:col-span-2"><label class="label">Título *</label><input type="text" class="input" id="dTitle" value="${d?d.title:''}" required></div>
+        <div><label class="label">Cliente</label><select class="input" id="dClient">${clientOptions}</select></div>
+        <div><label class="label">Obra</label><select class="input" id="dProject">${projOptions}</select></div>
+        <div><label class="label">Responsável Técnico</label><input type="text" class="input" id="dResp" value="${d?d.responsible_name:getDB().settings.technical_responsible}"></div>
+        <div><label class="label">CREA</label><input type="text" class="input" id="dCREA" value="${d?d.crea_number:getDB().settings.crea_number}"></div>
+        <div><label class="label">Data de Emissão</label><input type="date" class="input" id="dIssue" value="${d?d.issue_date:today()}"></div>
+        <div><label class="label">Data de Validade</label><input type="date" class="input" id="dExp" value="${d?d.expiration_date:addMonths(today(),12)}"></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveDocument(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const data = {document_type:document.getElementById('dType').value,document_number:document.getElementById('dNumber').value,title:document.getElementById('dTitle').value,client_id:document.getElementById('dClient').value,project_id:document.getElementById('dProject').value,equipment_id:'',employee_id:'',responsible_name:document.getElementById('dResp').value,crea_number:document.getElementById('dCREA').value,issue_date:document.getElementById('dIssue').value,expiration_date:document.getElementById('dExp').value,file_url:'',status:'valido',notes:''};
+  if (id) { const idx=db.technical_documents.findIndex(x=>x.id===id); db.technical_documents[idx]={...db.technical_documents[idx],...data}; addLog('update','technical_document',id,'Documento atualizado'); }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.technical_documents.push(data); addLog('create','technical_document',data.id,'Documento '+data.title+' cadastrado'); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Documento atualizado!':'Documento cadastrado!','success');
+}
+
+// ==================== COMPETENCY MATRIX ====================
+renderers.matrix = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  let html = `<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div><h3 class="font-display text-lg font-bold text-imec-dark">Matriz de Competência</h3><p class="text-sm text-gray-500">Verifique se os funcionários estão aptos para cada atividade</p></div>
+    ${canEdit()?'<button class="btn btn-primary" onclick="editRequirement()">+ Nova Atividade</button>':''}
+  </div>`;
+  html += '<div class="space-y-6">';
+  db.competency_requirements.forEach(req => {
+    const reqTrainings = req.required_training_ids || [];
+    html += `<div class="card p-6"><div class="flex items-center justify-between mb-4"><h4 class="font-display font-bold text-imec-dark">${req.activity_name}</h4><div class="flex gap-2 text-xs text-gray-500">${req.requires_aso?'<span class="badge badge-blue">ASO</span>':''}${req.requires_epi?'<span class="badge badge-blue">EPI</span>':''}${req.requires_client_integration?'<span class="badge badge-blue">Integração</span>':''}</div></div>`;
+    html += '<div class="table-container"><table><thead><tr><th>Funcionário</th>';
+    reqTrainings.forEach(tid => { const t = db.trainings.find(x=>x.id===tid); if(t) html += `<th class="text-center text-xs">${t.code}</th>`; });
+    if (req.requires_aso) html += '<th class="text-center text-xs">ASO</th>';
+    html += '<th class="text-center">Situação</th><th>Pendências</th></tr></thead><tbody>';
+    db.employees.filter(e=>e.status==='ativo').forEach(emp => {
+      const certs = db.certificates.filter(c=>c.employee_id===emp.id && c.status!=='cancelado');
+      const asos = db.medical_exams.filter(m=>m.employee_id===emp.id);
+      let missing = [];
+      let allValid = true;
+      html += `<tr><td class="font-semibold text-sm">${emp.full_name}</td>`;
+      reqTrainings.forEach(tid => {
+        const cert = certs.find(c=>c.training_id===tid);
+        if (!cert) { html += '<td class="text-center"><span class="badge badge-red">Falta</span></td>'; missing.push(db.trainings.find(t=>t.id===tid)?.code||'N/A'); allValid = false; }
+        else { const st = calcStatus(cert.expiration_date, alertDays); if (st==='vencido') { html += `<td class="text-center"><span class="badge badge-red">Venc.</span></td>`; missing.push(db.trainings.find(t=>t.id===tid)?.code+' venc.'); allValid = false; } else if (st==='vencendo') { html += `<td class="text-center"><span class="badge badge-orange">Venc.</span></td>`; missing.push(db.trainings.find(t=>t.id===tid)?.code+' vencendo'); } else { html += '<td class="text-center"><span class="badge badge-green">OK</span></td>'; } }
+      });
+      if (req.requires_aso) {
+        const latestASO = asos.sort((a,b)=>new Date(b.issue_date)-new Date(a.issue_date))[0];
+        if (!latestASO) { html += '<td class="text-center"><span class="badge badge-red">Falta</span></td>'; missing.push('ASO'); allValid = false; }
+        else { const st = calcStatus(latestASO.expiration_date, alertDays); if (st==='vencido') { html += '<td class="text-center"><span class="badge badge-red">Venc.</span></td>'; missing.push('ASO venc.'); allValid = false; } else { html += '<td class="text-center"><span class="badge badge-green">OK</span></td>'; } }
+      }
+      html += `<td class="text-center">${allValid?'<span class="badge badge-green">APTO</span>':'<span class="badge badge-red">INAPTO</span>'}</td>`;
+      html += `<td class="text-xs text-gray-500">${missing.length>0?missing.join(', '):'Nenhuma'}</td></tr>`;
+    });
+    html += '</tbody></table></div></div>';
+  });
+  html += '</div>';
+  return html;
+};
+
+function editRequirement(id) {
+  const db = getDB();
+  const r = id ? db.competency_requirements.find(x=>x.id===id) : null;
+  const trainChecks = db.trainings.map(t => `<label class="flex items-center gap-2 text-sm"><input type="checkbox" value="${t.id}" ${r&&r.required_training_ids&&r.required_training_ids.includes(t.id)?'checked':''}> ${t.code} — ${t.name}</label>`).join('');
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${r?'Editar':'Nova'} Atividade</h2>
+    <form onsubmit="saveRequirement(event,'${id||''}')">
+      <div class="space-y-4">
+        <div><label class="label">Nome da Atividade *</label><input type="text" class="input" id="reqName" value="${r?r.activity_name:''}" required></div>
+        <div><label class="label">Treinamentos Requeridos</label><div class="max-h-48 overflow-y-auto border rounded-xl p-3 space-y-2">${trainChecks}</div></div>
+        <div class="grid grid-cols-3 gap-4">
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="reqASO" ${r&&r.requires_aso?'checked':''}> Exige ASO</label>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="reqEPI" ${r&&r.requires_epi?'checked':''}> Exige EPI</label>
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="reqInteg" ${r&&r.requires_client_integration?'checked':''}> Integração</label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveRequirement(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const checkedTrains = Array.from(document.querySelectorAll('#modalContent input[type=checkbox][value^="t"]')).filter(c=>c.checked).map(c=>c.value);
+  const data = {activity_name:document.getElementById('reqName').value,required_training_ids:checkedTrains,requires_aso:document.getElementById('reqASO').checked,requires_epi:document.getElementById('reqEPI').checked,requires_client_integration:document.getElementById('reqInteg').checked,notes:''};
+  if (id) { const idx=db.competency_requirements.findIndex(x=>x.id===id); db.competency_requirements[idx]={...db.competency_requirements[idx],...data}; }
+  else { data.id=genId(); data.created_at=new Date().toISOString(); db.competency_requirements.push(data); }
+  saveDB(db); closeModal(); renderPage(); showToast('Atividade salva!','success');
+}
+
+// ==================== REPORTS ====================
+renderers.reports = function() {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  const reports = [
+    {id:'rpt_emps',name:'Funcionários Ativos',desc:'Lista completa de funcionários ativos',icon:'users'},
+    {id:'rpt_nr_expired',name:'Funcionários com NRs Vencidas',desc:'Certificados e treinamentos vencidos',icon:'alert'},
+    {id:'rpt_nr_expiring',name:'Funcionários com NRs a Vencer',desc:'Certificados próximos do vencimento',icon:'clock'},
+    {id:'rpt_certs',name:'Certificados Emitidos',desc:'Todos os certificados do sistema',icon:'cert'},
+    {id:'rpt_aso_expired',name:'ASOs Vencidos',desc:'Atestados de saúde vencidos',icon:'heart'},
+    {id:'rpt_eq_expired',name:'Equipamentos com Laudo Vencido',desc:'Laudos e documentos vencidos',icon:'tool'},
+    {id:'rpt_dossier_emp',name:'Dossiê do Funcionário',desc:'Relatório completo por funcionário',icon:'file'},
+    {id:'rpt_dossier_proj',name:'Dossiê da Obra',desc:'Relatório completo por obra',icon:'building'},
+  ];
+  let html = '<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">';
+  reports.forEach(r => {
+    html += `<div class="card p-5 cursor-pointer hover:border-imec-blue" onclick="generateReport('${r.id}')">
+      <div class="w-10 h-10 rounded-xl bg-imec-blue/10 flex items-center justify-center mb-3"><svg class="w-5 h-5 text-imec-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+      <h4 class="font-semibold text-sm text-gray-800">${r.name}</h4>
+      <p class="text-xs text-gray-400 mt-1">${r.desc}</p>
+    </div>`;
+  });
+  html += '</div>';
+  html += '<div id="reportOutput" class="mt-6"></div>';
+  return html;
+};
+
+function generateReport(rptId) {
+  const db = getDB();
+  const alertDays = db.settings.expiration_alert_days || 30;
+  const now = new Date().toLocaleDateString('pt-BR');
+  let title = '', headers = [], rows = [];
+  switch(rptId) {
+    case 'rpt_emps':
+      title = 'Funcionários Ativos';
+      headers = ['Nome','CPF','Função','Setor','Status','Admissão'];
+      db.employees.filter(e=>e.status==='ativo').forEach(e => rows.push([e.full_name,formatCPF(e.cpf),e.role_position,e.department,e.status,formatDate(e.admission_date)]));
+      break;
+    case 'rpt_nr_expired':
+      title = 'Funcionários com NRs Vencidas';
+      headers = ['Funcionário','Treinamento','Código','Validade','Status'];
+      db.certificates.filter(c=>c.status!=='cancelado'&&calcStatus(c.expiration_date,alertDays)==='vencido').forEach(c => {const e=db.employees.find(x=>x.id===c.employee_id);const t=db.trainings.find(x=>x.id===c.training_id);rows.push([e?e.full_name:'N/A',t?t.name:'N/A',t?t.code:'N/A',formatDate(c.expiration_date),'Vencido']);});
+      break;
+    case 'rpt_nr_expiring':
+      title = 'Funcionários com NRs a Vencer';
+      headers = ['Funcionário','Treinamento','Código','Validade','Dias Restantes'];
+      db.certificates.filter(c=>c.status!=='cancelado'&&calcStatus(c.expiration_date,alertDays)==='vencendo').forEach(c => {const e=db.employees.find(x=>x.id===c.employee_id);const t=db.trainings.find(x=>x.id===c.training_id);rows.push([e?e.full_name:'N/A',t?t.name:'N/A',t?t.code:'N/A',formatDate(c.expiration_date),daysUntil(c.expiration_date)+' dias']);});
+      break;
+    case 'rpt_certs':
+      title = 'Certificados Emitidos';
+      headers = ['Código','Funcionário','Treinamento','Emissão','Validade','Status'];
+      db.certificates.forEach(c => {const e=db.employees.find(x=>x.id===c.employee_id);const t=db.trainings.find(x=>x.id===c.training_id);const st=c.status==='cancelado'?'cancelado':calcStatus(c.expiration_date,alertDays);rows.push([c.certificate_code,e?e.full_name:'N/A',t?t.code:'N/A',formatDate(c.issue_date),formatDate(c.expiration_date),statusLabel(st)]);});
+      break;
+    case 'rpt_aso_expired':
+      title = 'ASOs Vencidos';
+      headers = ['Funcionário','Tipo','Emissão','Validade','Resultado'];
+      db.medical_exams.filter(m=>calcStatus(m.expiration_date,alertDays)==='vencido').forEach(m => {const e=db.employees.find(x=>x.id===m.employee_id);rows.push([e?e.full_name:'N/A',m.exam_type,formatDate(m.issue_date),formatDate(m.expiration_date),m.aptitude_result]);});
+      break;
+    case 'rpt_eq_expired':
+      title = 'Equipamentos com Laudo Vencido';
+      headers = ['Equipamento','Tipo','Documento','Validade','Responsável'];
+      db.equipment_documents.filter(d=>calcStatus(d.expiration_date,alertDays)==='vencido').forEach(d => {const eq=db.equipment.find(x=>x.id===d.equipment_id);rows.push([eq?eq.name:'N/A',eq?eq.type:'N/A',d.title,formatDate(d.expiration_date),d.responsible_name]);});
+      break;
+    case 'rpt_dossier_emp':
+      title = 'Dossiê do Funcionário';
+      headers = ['Funcionário','NRs Válidas','NRs Vencidas','ASO Status','EPIs'];
+      db.employees.filter(e=>e.status==='ativo').forEach(e => {const certs=db.certificates.filter(c=>c.employee_id===e.id&&c.status!=='cancelado');const valid=certs.filter(c=>calcStatus(c.expiration_date,alertDays)==='valido').length;const expired=certs.filter(c=>calcStatus(c.expiration_date,alertDays)==='vencido').length;const asos=db.medical_exams.filter(m=>m.employee_id===e.id);const latestASO=asos.sort((a,b)=>new Date(b.issue_date)-new Date(a.issue_date))[0];const epis=db.epi_records.filter(ep=>ep.employee_id===e.id).length;rows.push([e.full_name,valid,expired,latestASO?calcStatus(latestASO.expiration_date,alertDays):'Sem ASO',epis]);});
+      break;
+    case 'rpt_dossier_proj':
+      title = 'Dossiê da Obra';
+      headers = ['Obra','Cliente','Status','Funcionários','Equipamentos','Documentos'];
+      db.projects.forEach(p => {const cl=db.clients.find(c=>c.id===p.client_id);const emps=db.project_employees.filter(pe=>pe.project_id===p.id).length;const eqs=db.project_equipment.filter(pq=>pq.project_id===p.id).length;const docs=db.technical_documents.filter(td=>td.project_id===p.id).length;rows.push([p.name,cl?cl.name:'N/A',p.status,emps,eqs,docs]);});
+      break;
+  }
+  let outHtml = `<div class="card p-6"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display text-lg font-bold text-imec-dark">${title}</h3><p class="text-xs text-gray-400">Gerado em ${now} — ${db.settings.company_name}</p></div><div class="flex gap-2"><button class="btn btn-outline btn-sm" onclick="exportCSV('${rptId}')">Exportar CSV</button></div></div>`;
+  if (rows.length === 0) { outHtml += '<p class="text-gray-400 text-center py-8">Nenhum registro encontrado para este relatório.</p>'; }
+  else {
+    outHtml += '<div class="table-container"><table><thead><tr>';
+    headers.forEach(h => outHtml += `<th>${h}</th>`);
+    outHtml += '</tr></thead><tbody>';
+    rows.forEach(r => { outHtml += '<tr>'; r.forEach(c => outHtml += `<td class="text-sm">${c}</td>`); outHtml += '</tr>'; });
+    outHtml += '</tbody></table></div>';
+  }
+  outHtml += `<p class="text-xs text-gray-400 mt-4 text-center">${db.settings.report_footer}</p></div>`;
+  document.getElementById('reportOutput').innerHTML = outHtml;
+}
+
+function exportCSV(rptId) {
+  const output = document.getElementById('reportOutput');
+  const table = output.querySelector('table');
+  if (!table) return;
+  let csv = '';
+  table.querySelectorAll('tr').forEach(row => {
+    const cols = [];
+    row.querySelectorAll('th,td').forEach(cell => cols.push('"' + cell.textContent.replace(/"/g,'""') + '"'));
+    csv += cols.join(',') + '\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'relatorio_imec.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exportado!','success');
+}
+
+// ==================== USERS ====================
+renderers.users = function() {
+  const db = getDB();
+  let html = `<div class="flex items-center justify-between mb-6"><h3 class="font-display text-lg font-bold text-imec-dark">Usuários e Permissões</h3>${canAdmin()?'<button class="btn btn-primary" onclick="editUser()">+ Novo Usuário</button>':''}</div>`;
+  html += `<div class="table-container"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody>`;
+  db.users.forEach(u => {
+    html += `<tr><td class="font-semibold">${u.name}</td><td>${u.email}</td><td><span class="badge badge-blue">${roleLabel(u.role)}</span></td><td>${statusBadge(u.status)}</td>
+    <td><div class="flex gap-1">${canAdmin()?`<button class="btn btn-outline btn-sm" onclick="editUser('${u.id}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`:''}
+    ${canAdmin()&&u.id!==getSession().id?`<button class="btn btn-sm text-imec-red" onclick="deleteRecord('users','${u.id}','${u.name}')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+};
+
+function editUser(id) {
+  const db = getDB();
+  const u = id ? db.users.find(x=>x.id===id) : null;
+  openModal(`<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-6">${u?'Editar':'Novo'} Usuário</h2>
+    <form onsubmit="saveUser(event,'${id||''}')">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Nome *</label><input type="text" class="input" id="userName" value="${u?u.name:''}" required></div>
+        <div><label class="label">E-mail *</label><input type="email" class="input" id="userEmail" value="${u?u.email:''}" required></div>
+        <div><label class="label">Senha ${u?'(deixe vazio para manter)':'*'}</label><input type="password" class="input" id="userPass" ${u?'':'required'}></div>
+        <div><label class="label">Perfil</label><select class="input" id="userRole"><option value="admin" ${u&&u.role==='admin'?'selected':''}>Administrador</option><option value="engenharia" ${u&&u.role==='engenharia'?'selected':''}>Engenharia</option><option value="rh" ${u&&u.role==='rh'?'selected':''}>RH / Segurança</option><option value="viewer" ${u&&u.role==='viewer'?'selected':''}>Visualizador</option><option value="client" ${u&&u.role==='client'?'selected':''}>Cliente</option></select></div>
+        <div><label class="label">Status</label><select class="input" id="userStatus"><option value="ativo" ${u&&u.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${u&&u.status==='inativo'?'selected':''}>Inativo</option></select></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+    </form></div>`);
+}
+
+function saveUser(e, id) {
+  e.preventDefault();
+  const db = getDB();
+  const pass = document.getElementById('userPass').value;
+  const data = {name:document.getElementById('userName').value,email:document.getElementById('userEmail').value,role:document.getElementById('userRole').value,status:document.getElementById('userStatus').value};
+  if (pass) data.password = pass;
+  if (id) { const idx=db.users.findIndex(x=>x.id===id); db.users[idx]={...db.users[idx],...data}; }
+  else { data.id=genId(); data.password=pass; data.created_at=new Date().toISOString(); db.users.push(data); }
+  saveDB(db); closeModal(); renderPage(); showToast(id?'Usuário atualizado!':'Usuário cadastrado!','success');
+}
+
+// ==================== SETTINGS ====================
+renderers.settings = function() {
+  const db = getDB();
+  const s = db.settings;
+  return `<div class="max-w-3xl">
+    <div class="card p-6 mb-6">
+      <h3 class="font-display text-lg font-bold text-imec-dark mb-6">Dados da Empresa</h3>
+      <form onsubmit="saveSettings(event)">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div><label class="label">Nome da Empresa</label><input type="text" class="input" id="setName" value="${s.company_name}"></div>
+          <div><label class="label">CNPJ</label><input type="text" class="input" id="setCNPJ" value="${s.cnpj}"></div>
+          <div class="md:col-span-2"><label class="label">Endereço</label><input type="text" class="input" id="setAddress" value="${s.address}"></div>
+          <div><label class="label">E-mail</label><input type="email" class="input" id="setEmail" value="${s.email}"></div>
+          <div><label class="label">Telefone</label><input type="text" class="input" id="setPhone" value="${s.phone}"></div>
+          <div><label class="label">Responsável Técnico</label><input type="text" class="input" id="setResp" value="${s.technical_responsible}"></div>
+          <div><label class="label">CREA</label><input type="text" class="input" id="setCREA" value="${s.crea_number}"></div>
+        </div>
+        <h3 class="font-display text-lg font-bold text-imec-dark mt-8 mb-4">Configurações do Sistema</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div><label class="label">Prazo de Alerta (dias)</label><select class="input" id="setAlertDays"><option value="30" ${s.expiration_alert_days===30?'selected':''}>30 dias</option><option value="60" ${s.expiration_alert_days===60?'selected':''}>60 dias</option><option value="90" ${s.expiration_alert_days===90?'selected':''}>90 dias</option></select></div>
+          <div><label class="label">Permitir PDF na Página Pública</label><select class="input" id="setPublicPDF"><option value="true" ${s.allow_public_pdf_view?'selected':''}>Sim</option><option value="false" ${!s.allow_public_pdf_view?'selected':''}>Não</option></select></div>
+          <div class="md:col-span-2"><label class="label">Rodapé dos Relatórios</label><textarea class="input" rows="2" id="setFooter">${s.report_footer}</textarea></div>
+        </div>
+        <div class="flex justify-end gap-3 mt-6"><button type="submit" class="btn btn-primary">Salvar Configurações</button></div>
+      </form>
+    </div>
+    <div class="card p-6">
+      <h3 class="font-display text-lg font-bold text-imec-dark mb-4">Auditoria / Histórico</h3>
+      <div class="max-h-64 overflow-y-auto space-y-2">
+        ${db.audit_logs.slice(0,20).map(l => {const u=db.users.find(x=>x.id===l.user_id);return `<div class="flex items-start gap-3 text-sm p-2 bg-gray-50 rounded-lg"><div class="w-2 h-2 rounded-full bg-imec-blue mt-1.5 flex-shrink-0"></div><div class="flex-1"><p class="text-gray-800">${l.description}</p><p class="text-xs text-gray-400">${u?u.name:'Sistema'} — ${new Date(l.created_at).toLocaleString('pt-BR')}</p></div></div>`;}).join('')||'<p class="text-gray-400 text-sm">Nenhum registro</p>'}
+      </div>
+    </div>
+  </div>`;
+};
+
+function saveSettings(e) {
+  e.preventDefault();
+  const db = getDB();
+  db.settings.company_name = document.getElementById('setName').value;
+  db.settings.cnpj = document.getElementById('setCNPJ').value;
+  db.settings.address = document.getElementById('setAddress').value;
+  db.settings.email = document.getElementById('setEmail').value;
+  db.settings.phone = document.getElementById('setPhone').value;
+  db.settings.technical_responsible = document.getElementById('setResp').value;
+  db.settings.crea_number = document.getElementById('setCREA').value;
+  db.settings.expiration_alert_days = parseInt(document.getElementById('setAlertDays').value);
+  db.settings.allow_public_pdf_view = document.getElementById('setPublicPDF').value === 'true';
+  db.settings.report_footer = document.getElementById('setFooter').value;
+  saveDB(db);
+  showToast('Configurações salvas!','success');
+  addLog('update','settings','s1','Configurações do sistema atualizadas');
+}
+
+// ==================== TOGGLE NOTIFICATIONS ====================
+function toggleNotifPanel() {
+  const db = getDB();
+  const alerts = getAlerts(db);
+  let html = '<div class="p-6"><h2 class="font-display text-xl font-bold text-imec-dark mb-4">Notificações</h2>';
+  if (alerts.length === 0) html += '<p class="text-gray-400 text-center py-8">Nenhuma notificação pendente</p>';
+  else alerts.forEach(a => { html += `<div class="alert-item ${a.level==='critical'?'alert-critical':'alert-warning'} mb-2"><div class="pulse-dot mt-1.5 ${a.level==='critical'?'bg-imec-red':'bg-imec-orange'}"></div><div><p class="text-sm font-medium">${a.msg}</p><p class="text-xs text-gray-400">${a.type}</p></div></div>`; });
+  html += '<div class="flex justify-end mt-4"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div></div>';
+  openModal(html);
+}
+</script>
+</body>
+</html>

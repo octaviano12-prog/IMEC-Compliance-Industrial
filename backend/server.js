@@ -17,8 +17,8 @@ function sendFrontendApp(req, res, next) {
     if (err) return next(err);
 
     const enhancedHtml = html
-      .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n</head>')
-      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n</body>');
+      .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n</head>')
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n</body>');
 
     res.type('html').send(enhancedHtml);
   });

@@ -31,7 +31,7 @@ router.get('/:id', authenticate, async (req, res) => {
       LEFT JOIN equipment eq ON ed.equipment_id = eq.id
       WHERE ed.id = ?
     `, [req.params.id]);
-    if (docs.length === 0) return res.status(404).json({ error: 'Documento não encontrado' });
+    if (docs.length === 0) return res.status(404).json({ error: 'Documento nao encontrado' });
     res.json(docs[0]);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar documento' });
@@ -40,10 +40,10 @@ router.get('/:id', authenticate, async (req, res) => {
 
 router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { equipment_id, document_type, document_number, issue_date, expiration_date, file_url, observations } = req.body;
+    const { equipment_id, document_type, title, document_number, issue_date, expiration_date, responsible_name, file_url, status, notes } = req.body;
     const [result] = await db.query(
-      'INSERT INTO equipment_documents (equipment_id, document_type, document_number, issue_date, expiration_date, file_url, observations) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [equipment_id, document_type, document_number, issue_date, expiration_date, file_url, observations]
+      'INSERT INTO equipment_documents (equipment_id, document_type, title, document_number, issue_date, expiration_date, responsible_name, file_url, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [equipment_id, document_type, title || document_type, document_number, issue_date || null, expiration_date || null, responsible_name, file_url, status || 'valido', notes]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'create', 'equipment_document', result.insertId, `Documento cadastrado para equipamento ${equipment_id}`]);
@@ -56,10 +56,10 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
 
 router.put('/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { equipment_id, document_type, document_number, issue_date, expiration_date, file_url, observations } = req.body;
+    const { equipment_id, document_type, title, document_number, issue_date, expiration_date, responsible_name, file_url, status, notes } = req.body;
     await db.query(
-      'UPDATE equipment_documents SET equipment_id=?, document_type=?, document_number=?, issue_date=?, expiration_date=?, file_url=?, observations=? WHERE id=?',
-      [equipment_id, document_type, document_number, issue_date, expiration_date, file_url, observations, req.params.id]
+      'UPDATE equipment_documents SET equipment_id=?, document_type=?, title=?, document_number=?, issue_date=?, expiration_date=?, responsible_name=?, file_url=?, status=?, notes=? WHERE id=?',
+      [equipment_id, document_type, title || document_type, document_number, issue_date || null, expiration_date || null, responsible_name, file_url, status || 'valido', notes, req.params.id]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'update', 'equipment_document', req.params.id, `Documento ${req.params.id} atualizado`]);
@@ -73,7 +73,7 @@ router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
   try {
     await db.query('DELETE FROM equipment_documents WHERE id = ?', [req.params.id]);
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
-      [req.user.id, 'delete', 'equipment_document', req.params.id, `Documento ${req.params.id} excluído`]);
+      [req.user.id, 'delete', 'equipment_document', req.params.id, `Documento ${req.params.id} excluido`]);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao excluir documento do equipamento' });

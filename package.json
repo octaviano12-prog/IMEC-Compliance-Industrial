@@ -1,0 +1,20 @@
+{
+  "name": "imec-compliance-industrial",
+  "version": "1.0.0",
+  "description": "Sistema industrial da IMEC para controle de NRs, certificados, funcionários, equipamentos, vencimentos, documentos em PDF, QR Code de validação e gestão de conformidade técnica.",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install:backend": "cd backend && npm install"
+  },
+  "keywords": [
+    "compliance",
+    "industrial",
+    "nr",
+    "certificados",
+    "seguranca-do-trabalho",
+    "gestao"
+  ],
+  "author": "IMEC Soluções Industriais",
+  "license": "ISC"
+}

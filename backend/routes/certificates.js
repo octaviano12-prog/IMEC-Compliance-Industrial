@@ -125,7 +125,7 @@ router.get('/consult/:code', async (req, res) => {
 // POST create certificate
 router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, notes } = req.body;
+    const { employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, pdf_url, card_image_url, notes } = req.body;
     
     const [training] = await db.query('SELECT code FROM trainings WHERE id = ?', [training_id]);
     const trainCode = training[0]?.code || 'CERT';
@@ -138,9 +138,9 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
     const verification_token = crypto.randomBytes(32).toString('hex');
     
     const [result] = await db.query(
-      `INSERT INTO certificates (employee_id, training_id, certificate_code, verification_token, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, notes, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [employee_id, training_id, certificate_code, verification_token, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, notes, req.user.id]
+      `INSERT INTO certificates (employee_id, training_id, certificate_code, verification_token, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, pdf_url, card_image_url, notes, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employee_id, training_id, certificate_code, verification_token, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, pdf_url, card_image_url, notes, req.user.id]
     );
     
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
@@ -156,10 +156,10 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
 // PUT update certificate
 router.put('/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, notes } = req.body;
+    const { employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, pdf_url, card_image_url, notes } = req.body;
     await db.query(
-      `UPDATE certificates SET employee_id=?, training_id=?, issue_date=?, expiration_date=?, workload=?, instructor_name=?, issuer_company=?, technical_responsible=?, crea_number=?, notes=? WHERE id=?`,
-      [employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, notes, req.params.id]
+      `UPDATE certificates SET employee_id=?, training_id=?, issue_date=?, expiration_date=?, workload=?, instructor_name=?, issuer_company=?, technical_responsible=?, crea_number=?, pdf_url=?, card_image_url=?, notes=? WHERE id=?`,
+      [employee_id, training_id, issue_date, expiration_date, workload, instructor_name, issuer_company, technical_responsible, crea_number, pdf_url, card_image_url, notes, req.params.id]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'update', 'certificate', req.params.id, 'Certificado atualizado']);

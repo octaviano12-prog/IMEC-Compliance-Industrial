@@ -2,8 +2,6 @@
 -- MySQL 8.0+
 -- Version: 1.0
 
-CREATE DATABASE IF NOT EXISTS imec_compliance CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE imec_compliance;
 
 -- ============================================
 -- USERS

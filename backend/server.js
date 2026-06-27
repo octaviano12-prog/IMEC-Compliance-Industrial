@@ -14,11 +14,34 @@ const frontendDir = path.join(__dirname, '../frontend');
 const indexFile = path.join(frontendDir, 'index.html');
 
 async function applyCompatibilityMigrations() {
-  try {
-    await db.query('ALTER TABLE employees MODIFY photo_url MEDIUMTEXT');
-    await db.query('ALTER TABLE equipment MODIFY photo_url MEDIUMTEXT');
-  } catch (err) {
-    console.warn('Compatibilidade do banco nao aplicada:', err.message);
+  const statements = [
+    'ALTER TABLE employees MODIFY photo_url MEDIUMTEXT',
+    'ALTER TABLE equipment MODIFY photo_url MEDIUMTEXT',
+    'ALTER TABLE certificates MODIFY pdf_url MEDIUMTEXT',
+    'ALTER TABLE certificates MODIFY card_image_url MEDIUMTEXT',
+    'ALTER TABLE medical_exams MODIFY pdf_url MEDIUMTEXT',
+    'ALTER TABLE epi_records MODIFY attachment_url MEDIUMTEXT',
+    'ALTER TABLE equipment_documents MODIFY file_url MEDIUMTEXT',
+    'ALTER TABLE technical_documents MODIFY file_url MEDIUMTEXT',
+    'CREATE INDEX idx_certificates_employee ON certificates(employee_id)',
+    'CREATE INDEX idx_certificates_training ON certificates(training_id)',
+    'CREATE INDEX idx_certificates_expiration ON certificates(expiration_date)',
+    'CREATE INDEX idx_medical_exams_employee ON medical_exams(employee_id)',
+    'CREATE INDEX idx_medical_exams_expiration ON medical_exams(expiration_date)',
+    'CREATE INDEX idx_epi_records_employee ON epi_records(employee_id)',
+    'CREATE INDEX idx_equipment_documents_equipment ON equipment_documents(equipment_id)',
+    'CREATE INDEX idx_technical_documents_project ON technical_documents(project_id)'
+  ];
+
+  for (const statement of statements) {
+    try {
+      await db.query(statement);
+    } catch (err) {
+      const msg = String(err.message || '');
+      if (!msg.includes('Duplicate key name') && !msg.includes('check that column/key exists')) {
+        console.warn('Compatibilidade do banco nao aplicada:', msg);
+      }
+    }
   }
 }
 
@@ -28,7 +51,7 @@ function sendFrontendApp(req, res, next) {
 
     const enhancedHtml = html
       .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n</head>')
-      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n</body>');
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n<link rel="stylesheet" href="/production-readiness.css">\n<script src="/production-readiness.js"></script>\n</body>');
 
     res.type('html').send(enhancedHtml);
   });

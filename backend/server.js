@@ -51,7 +51,7 @@ function sendFrontendApp(req, res, next) {
 
     const enhancedHtml = html
       .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n</head>')
-      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n<link rel="stylesheet" href="/production-readiness.css">\n<script src="/production-readiness.js"></script>\n<link rel="stylesheet" href="/executive-control.css">\n<script src="/executive-control.js"></script>\n</body>');
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n<link rel="stylesheet" href="/production-readiness.css">\n<script src="/production-readiness.js"></script>\n<link rel="stylesheet" href="/executive-control.css">\n<script src="/executive-control.js"></script>\n<link rel="stylesheet" href="/professional-suite.css">\n<script src="/professional-suite.js"></script>\n</body>');
 
     res.type('html').send(enhancedHtml);
   });

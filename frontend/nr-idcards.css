@@ -520,8 +520,35 @@
 }
 
 .nr-back-head h3 {
+  flex: 1;
   font: 950 27px Outfit, sans-serif;
   text-transform: uppercase;
+}
+
+.nr-status-pill {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.28);
+  color: #fff;
+  text-align: center;
+  font: 950 12px Outfit, sans-serif;
+  letter-spacing: .08em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+}
+
+.nr-status-pill.is-ready {
+  background: rgba(22,163,74,.22);
+  border-color: rgba(134,239,172,.5);
+}
+
+.nr-status-pill.is-pending {
+  background: rgba(217,119,6,.22);
+  border-color: rgba(253,186,116,.55);
 }
 
 .nr-back-redline {
@@ -825,6 +852,7 @@
   .nr-head-icon::before { inset: 3mm 3.5mm 2.2mm; border-width: .5mm; }
   .nr-head-icon::after { left: 4.7mm; top: 5mm; width: 4mm; height: 5mm; }
   .nr-back-head h3 { font-size: 11pt; }
+  .nr-status-pill { min-width: 15mm; padding: 1.2mm 2mm; font-size: 5.5pt; }
   .nr-back-redline { height: 1.6mm; margin-top: -1.6mm; margin-left: 36mm; }
   .nr-back-body { padding: 4mm 6mm 15mm; }
   .nr-training-line { grid-template-columns: 23mm 1fr; gap: 2mm; padding: 2mm 0; }

@@ -65,8 +65,8 @@
         var image = new Image();
         image.onerror = function () { reject(new Error('Imagem invalida.')); };
         image.onload = function () {
-          var maxWidth = 520;
-          var maxHeight = 680;
+          var maxWidth = 420;
+          var maxHeight = 560;
           var ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
           var canvas = document.createElement('canvas');
           canvas.width = Math.max(1, Math.round(image.width * ratio));
@@ -75,7 +75,7 @@
           ctx.fillStyle = '#ffffff';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.82));
+          resolve(canvas.toDataURL('image/jpeg', 0.74));
         };
         image.src = reader.result;
       };
@@ -90,8 +90,8 @@
       showToast('Selecione uma imagem valida.', 'error');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('Use uma foto menor que 5 MB.', 'error');
+    if (file.size > 12 * 1024 * 1024) {
+      showToast('Use uma foto menor que 12 MB. O sistema comprime automaticamente antes de salvar.', 'error');
       return;
     }
     var employee = (getDB().employees || []).find(function (item) { return String(item.id) === String(employeeId); });

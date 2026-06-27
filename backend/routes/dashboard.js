@@ -40,18 +40,25 @@ router.get('/', authenticate, async (req, res) => {
       else validCertificates++;
     }
 
-    const [asoResults] = await db.query('SELECT expiration_date FROM medical_exams WHERE expiration_date IS NOT NULL');
+    const [asoResults] = await db.query(`
+      SELECT m.id, m.exam_type, m.expiration_date, e.full_name as employee_name
+      FROM medical_exams m
+      LEFT JOIN employees e ON m.employee_id = e.id
+      WHERE m.expiration_date IS NOT NULL
+    `);
     const expiredASO = asoResults.filter((aso) => daysUntil(aso.expiration_date, now) < 0).length;
 
     const [laudoResults] = await db.query(`
-      SELECT expiration_date
-      FROM equipment_documents
+      SELECT ed.id, ed.title, ed.document_type, ed.expiration_date, eq.name as equipment_name
+      FROM equipment_documents ed
+      LEFT JOIN equipment eq ON ed.equipment_id = eq.id
       WHERE expiration_date IS NOT NULL
-        AND (LOWER(document_type) LIKE '%laudo%' OR LOWER(title) LIKE '%laudo%')
+        AND (LOWER(ed.document_type) LIKE '%laudo%' OR LOWER(ed.title) LIKE '%laudo%')
     `);
     const expiredLaudos = laudoResults.filter((laudo) => daysUntil(laudo.expiration_date, now) < 0).length;
 
     const alerts = [];
+
     const [expiringCerts] = await db.query(`
       SELECT c.id, c.certificate_code, c.expiration_date, e.full_name as employee_name, t.name as training_name
       FROM certificates c
@@ -77,10 +84,15 @@ router.get('/', authenticate, async (req, res) => {
     for (const aso of asoResults) {
       const days = daysUntil(aso.expiration_date, now);
       if (days < 0 || days <= alertDays) {
+        const owner = aso.employee_name || 'Funcionario nao informado';
+        const examType = aso.exam_type || 'ASO';
         alerts.push({
           type: days < 0 ? 'ASO vencido' : 'ASO a vencer',
           level: alertLevel(days),
-          msg: days < 0 ? `ASO vencido ha ${Math.abs(days)} dias` : `ASO vence em ${days} dias`
+          msg: days < 0
+            ? `${examType} de ${owner} vencido ha ${Math.abs(days)} dias`
+            : `${examType} de ${owner} vence em ${days} dias`,
+          entity_id: aso.id
         });
       }
     }
@@ -88,10 +100,15 @@ router.get('/', authenticate, async (req, res) => {
     for (const laudo of laudoResults) {
       const days = daysUntil(laudo.expiration_date, now);
       if (days < 0 || days <= alertDays) {
+        const title = laudo.title || laudo.document_type || 'Laudo';
+        const equipment = laudo.equipment_name || 'equipamento nao informado';
         alerts.push({
           type: days < 0 ? 'Laudo vencido' : 'Laudo a vencer',
           level: alertLevel(days),
-          msg: days < 0 ? `Laudo vencido ha ${Math.abs(days)} dias` : `Laudo vence em ${days} dias`
+          msg: days < 0
+            ? `${title} de ${equipment} vencido ha ${Math.abs(days)} dias`
+            : `${title} de ${equipment} vence em ${days} dias`,
+          entity_id: laudo.id
         });
       }
     }

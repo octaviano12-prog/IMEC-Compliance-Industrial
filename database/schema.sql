@@ -16,6 +16,7 @@ CREATE TABLE users (
     role ENUM('admin', 'engenharia', 'rh', 'viewer', 'client') NOT NULL DEFAULT 'viewer',
     status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
     client_id INT NULL,
+    password_changed_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -304,6 +305,13 @@ CREATE TABLE system_settings (
     expiration_alert_days INT DEFAULT 30,
     allow_public_pdf_view BOOLEAN DEFAULT TRUE,
     report_footer TEXT,
+    notification_email VARCHAR(255),
+    smtp_host VARCHAR(255),
+    smtp_port INT DEFAULT 587,
+    smtp_secure BOOLEAN DEFAULT FALSE,
+    smtp_user VARCHAR(255),
+    smtp_pass VARCHAR(255),
+    smtp_from VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;

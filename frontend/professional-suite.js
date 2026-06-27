@@ -67,6 +67,23 @@
     return true;
   }
 
+  function ensureApiExtensions() {
+    if (typeof API === 'undefined' || API.__suiteApiExtensions) return false;
+    API.auth.changePassword = function (payload) {
+      return apiFetch('/api/auth/change-password', { method: 'POST', body: JSON.stringify(payload) });
+    };
+    API.notifications = {
+      pending: function () { return apiFetch('/api/notifications/pending'); },
+      sendTest: function (payload) { return apiFetch('/api/notifications/send-test', { method: 'POST', body: JSON.stringify(payload || {}) }); }
+    };
+    API.reportsServer = {
+      auditHtml: function () { return API_BASE + '/api/reports/audit/html'; },
+      employeeHtml: function (id) { return API_BASE + '/api/reports/employee/' + encodeURIComponent(id) + '/html'; }
+    };
+    API.__suiteApiExtensions = true;
+    return true;
+  }
+
   function getPendingItems() {
     var items = [];
     var data = db();
@@ -189,6 +206,75 @@
     };
     downloadText('backup-imec-compliance.json', JSON.stringify(backup, null, 2), 'application/json;charset=utf-8;');
     if (typeof showToast === 'function') showToast('Backup exportado.', 'success');
+  };
+
+  window.openPasswordModal = function openPasswordModal() {
+    openModal('<div class="p-6"><div class="exec-panel-head"><div><p class="text-xs font-black uppercase tracking-widest text-blue-700">Seguranca</p><h2 class="font-display text-2xl font-black text-imec-dark">Alterar senha</h2><p class="text-sm text-slate-500 mt-1">Use no minimo 8 caracteres, maiuscula, minuscula, numero e especial.</p></div></div><form onsubmit="savePasswordChange(event)"><div class="grid md:grid-cols-2 gap-4"><div><label class="label">Senha atual</label><input class="input" type="password" id="suiteCurrentPassword" required></div><div><label class="label">Nova senha</label><input class="input" type="password" id="suiteNewPassword" required></div></div><div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" type="submit">Salvar senha</button></div></form></div>');
+  };
+
+  window.savePasswordChange = async function savePasswordChange(event) {
+    event.preventDefault();
+    try {
+      await API.auth.changePassword({
+        current_password: document.getElementById('suiteCurrentPassword').value,
+        new_password: document.getElementById('suiteNewPassword').value
+      });
+      closeModal();
+      if (typeof showToast === 'function') showToast('Senha alterada com seguranca.', 'success');
+    } catch (err) {
+      if (typeof showToast === 'function') showToast(err.message || 'Erro ao alterar senha.', 'error');
+    }
+  };
+
+  window.openEmailSettingsModal = function openEmailSettingsModal() {
+    var s = db().settings || {};
+    openModal('<div class="p-6"><div class="exec-panel-head"><div><p class="text-xs font-black uppercase tracking-widest text-blue-700">Notificacoes</p><h2 class="font-display text-2xl font-black text-imec-dark">Configurar e-mail SMTP</h2><p class="text-sm text-slate-500 mt-1">Se deixar vazio, o sistema gera apenas uma previa para conferencia.</p></div><button class="btn btn-outline btn-sm" onclick="sendNotificationPreview()">Enviar teste</button></div><form onsubmit="saveEmailSettings(event)"><div class="grid md:grid-cols-2 gap-4"><div><label class="label">E-mail de destino</label><input class="input" id="suiteNotificationEmail" value="' + esc(s.notification_email || s.email || '') + '"></div><div><label class="label">Remetente</label><input class="input" id="suiteSmtpFrom" value="' + esc(s.smtp_from || s.smtp_user || '') + '"></div><div><label class="label">SMTP host</label><input class="input" id="suiteSmtpHost" value="' + esc(s.smtp_host || '') + '"></div><div><label class="label">SMTP porta</label><input class="input" id="suiteSmtpPort" type="number" value="' + esc(s.smtp_port || 587) + '"></div><div><label class="label">SMTP usuario</label><input class="input" id="suiteSmtpUser" value="' + esc(s.smtp_user || '') + '"></div><div><label class="label">SMTP senha</label><input class="input" id="suiteSmtpPass" type="password" value="' + esc(s.smtp_pass || '') + '"></div><label class="flex items-center gap-2 text-sm font-semibold text-slate-600"><input type="checkbox" id="suiteSmtpSecure" ' + (s.smtp_secure ? 'checked' : '') + '> Usar SSL/TLS</label></div><div id="suiteNotificationResult" class="mt-4"></div><div class="flex justify-end gap-3 mt-6"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" type="submit">Salvar configuracao</button></div></form></div>');
+  };
+
+  function settingsPayloadWithEmail() {
+    var s = db().settings || {};
+    return Object.assign({}, s, {
+      notification_email: document.getElementById('suiteNotificationEmail').value,
+      smtp_from: document.getElementById('suiteSmtpFrom').value,
+      smtp_host: document.getElementById('suiteSmtpHost').value,
+      smtp_port: Number(document.getElementById('suiteSmtpPort').value || 587),
+      smtp_user: document.getElementById('suiteSmtpUser').value,
+      smtp_pass: document.getElementById('suiteSmtpPass').value,
+      smtp_secure: document.getElementById('suiteSmtpSecure').checked
+    });
+  }
+
+  window.saveEmailSettings = async function saveEmailSettings(event) {
+    event.preventDefault();
+    try {
+      await API.settings.update(settingsPayloadWithEmail());
+      await refreshData();
+      if (typeof showToast === 'function') showToast('Configuracao de e-mail salva.', 'success');
+    } catch (err) {
+      if (typeof showToast === 'function') showToast(err.message || 'Erro ao salvar e-mail.', 'error');
+    }
+  };
+
+  window.sendNotificationPreview = async function sendNotificationPreview() {
+    try {
+      var target = document.getElementById('suiteNotificationResult');
+      if (target) target.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      var result = await API.notifications.sendTest({ to: document.getElementById('suiteNotificationEmail').value });
+      if (target) {
+        target.innerHTML = '<div class="suite-template">' + esc(result.sent ? ('Enviado para ' + result.to + ' com ' + result.total + ' pendencia(s).') : ('Previa gerada. Pendencias: ' + result.total + '\\n\\n' + (result.message || ''))) + '</div>';
+      }
+      if (typeof showToast === 'function') showToast(result.sent ? 'E-mail enviado.' : 'Previa de e-mail gerada.', result.sent ? 'success' : 'info');
+    } catch (err) {
+      if (typeof showToast === 'function') showToast(err.message || 'Erro ao testar e-mail.', 'error');
+    }
+  };
+
+  window.openServerReport = function openServerReport(type, id) {
+    var url = type === 'employee' ? API.reportsServer.employeeHtml(id) : API.reportsServer.auditHtml();
+    var token = typeof getToken === 'function' ? getToken() : '';
+    var w = window.open('', '_blank', 'width=1180,height=820');
+    w.document.write('<html><body style="font-family:Arial;padding:30px"><p>Gerando relatorio...</p><script>fetch(' + JSON.stringify(url) + ',{headers:{Authorization:"Bearer ' + token + '"}}).then(function(r){return r.text()}).then(function(html){document.open();document.write(html);document.close();}).catch(function(){document.body.innerHTML="Erro ao gerar relatorio";});</script></body></html>');
+    w.document.close();
   };
 
   function parseCSV(text) {
@@ -363,7 +449,7 @@
   }
 
   function actionBar() {
-    return '<div class="suite-action-bar suite-no-print"><div><strong class="text-imec-dark">Ferramentas profissionais</strong><p class="text-xs text-slate-500">Auditoria, backup, anexos e importacao em massa.</p></div><div class="suite-action-group"><button class="btn btn-outline btn-sm" onclick="openAuditBoard()">Auditoria</button><button class="btn btn-outline btn-sm" onclick="openAttachmentVault()">Anexos</button><button class="btn btn-outline btn-sm" onclick="exportBackupJSON()">Backup</button></div></div>';
+    return '<div class="suite-action-bar suite-no-print"><div><strong class="text-imec-dark">Ferramentas profissionais</strong><p class="text-xs text-slate-500">Auditoria, backup, anexos, seguranca e notificacoes.</p></div><div class="suite-action-group"><button class="btn btn-outline btn-sm" onclick="openAuditBoard()">Auditoria</button><button class="btn btn-outline btn-sm" onclick="openAttachmentVault()">Anexos</button><button class="btn btn-outline btn-sm" onclick="exportBackupJSON()">Backup</button><button class="btn btn-outline btn-sm" onclick="openPasswordModal()">Senha</button><button class="btn btn-outline btn-sm" onclick="openEmailSettingsModal()">E-mail</button><button class="btn btn-primary btn-sm" onclick="openServerReport(\'audit\')">PDF servidor</button></div></div>';
   }
 
   function patchDashboardTools() {
@@ -406,6 +492,7 @@
   }
 
   function boot(attempt) {
+    ensureApiExtensions();
     patchUpdatePreservation();
     patchReportPrint();
     patchCardPrint();

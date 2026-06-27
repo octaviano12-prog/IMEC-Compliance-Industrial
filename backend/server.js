@@ -23,6 +23,14 @@ async function applyCompatibilityMigrations() {
     'ALTER TABLE epi_records MODIFY attachment_url MEDIUMTEXT',
     'ALTER TABLE equipment_documents MODIFY file_url MEDIUMTEXT',
     'ALTER TABLE technical_documents MODIFY file_url MEDIUMTEXT',
+    'ALTER TABLE users ADD COLUMN password_changed_at TIMESTAMP NULL',
+    'ALTER TABLE system_settings ADD COLUMN notification_email VARCHAR(255)',
+    'ALTER TABLE system_settings ADD COLUMN smtp_host VARCHAR(255)',
+    'ALTER TABLE system_settings ADD COLUMN smtp_port INT DEFAULT 587',
+    'ALTER TABLE system_settings ADD COLUMN smtp_secure BOOLEAN DEFAULT FALSE',
+    'ALTER TABLE system_settings ADD COLUMN smtp_user VARCHAR(255)',
+    'ALTER TABLE system_settings ADD COLUMN smtp_pass VARCHAR(255)',
+    'ALTER TABLE system_settings ADD COLUMN smtp_from VARCHAR(255)',
     'CREATE INDEX idx_certificates_employee ON certificates(employee_id)',
     'CREATE INDEX idx_certificates_training ON certificates(training_id)',
     'CREATE INDEX idx_certificates_expiration ON certificates(expiration_date)',
@@ -108,6 +116,8 @@ app.use('/api/settings', require('./routes/settings'));
 app.use('/api/audit-logs', require('./routes/auditLogs'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/reports', require('./routes/reports'));
 
 // Health check
 app.get('/api/health', (req, res) => {

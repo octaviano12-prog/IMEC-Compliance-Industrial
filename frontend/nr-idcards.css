@@ -113,17 +113,17 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 250px;
-  min-height: 118px;
-  padding: 20px 0 0 24px;
+  width: 224px;
+  min-height: 112px;
+  padding: 18px 0 0 22px;
 }
 
 .nr-brand-logo {
   display: block;
-  width: 246px;
-  max-width: 246px;
+  width: 218px;
+  max-width: 218px;
   height: auto;
-  max-height: 132px;
+  max-height: 118px;
   object-fit: contain;
   filter: drop-shadow(0 8px 12px rgba(7, 27, 58, .22));
 }
@@ -133,7 +133,7 @@
   z-index: 1;
   right: 28px;
   bottom: 74px;
-  width: 172px;
+  width: 180px;
   height: auto;
   opacity: .08;
   filter: grayscale(1);

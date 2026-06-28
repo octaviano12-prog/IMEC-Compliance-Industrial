@@ -454,10 +454,6 @@
 
   function patchDashboardTools() {
     if (typeof renderers === 'undefined' || !renderers.dashboard || renderers.dashboard.__suiteTools) return false;
-    var originalDashboard = renderers.dashboard;
-    renderers.dashboard = async function () {
-      return actionBar() + await originalDashboard.apply(this, arguments);
-    };
     renderers.dashboard.__suiteTools = true;
     return true;
   }

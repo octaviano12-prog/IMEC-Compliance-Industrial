@@ -248,13 +248,6 @@
 
   function patchDashboard() {
     if (typeof renderers === 'undefined' || !renderers.dashboard || renderers.dashboard.__execPatched) return false;
-    var original = renderers.dashboard;
-    renderers.dashboard = async function () {
-      var base = await original.apply(this, arguments);
-      var items = buildPendingItems();
-      var panel = '<div class="grid lg:grid-cols-2 gap-6 mb-6"><section class="exec-panel"><div class="exec-panel-head"><h3>Prioridades de hoje</h3><button class="btn btn-outline btn-sm" onclick="openPendingCenter()">Ver tudo</button></div>' + pendingHtml(items, 6) + '</section><section class="exec-panel"><div class="exec-panel-head"><h3>Plano rapido de acao</h3><button class="btn btn-outline btn-sm" onclick="navigate(\'reports\')">Relatorios</button></div><div class="grid sm:grid-cols-2 gap-3"><button class="btn btn-outline justify-between" onclick="navigate(\'employees\')">Revisar funcionarios <span>></span></button><button class="btn btn-outline justify-between" onclick="navigate(\'certificates\')">Renovar NRs <span>></span></button><button class="btn btn-outline justify-between" onclick="navigate(\'aso\')">Atualizar ASO <span>></span></button><button class="btn btn-outline justify-between" onclick="navigate(\'idcards\')">Emitir carteirinhas <span>></span></button></div></section></div>';
-      return executiveHero() + panel + base;
-    };
     renderers.dashboard.__execPatched = true;
     return true;
   }

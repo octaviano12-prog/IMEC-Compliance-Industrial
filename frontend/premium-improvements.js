@@ -240,7 +240,7 @@
     var original = window.renderIdCardsPage;
     window.renderIdCardsPage = function () {
       var html = original.apply(this, arguments);
-      var filter = '<div class="premium-panel p-4 mb-4 premium-card-filter suite-no-print"><input class="input" id="premiumCardSearch" placeholder="Buscar colaborador, CPF ou funcao" oninput="filterPremiumCards()"><select class="input" id="premiumCardStatus" onchange="filterPremiumCards()"><option value="">Todos os status</option><option value="apto">Aptos</option><option value="pendente">Pendentes</option></select><button class="btn btn-outline btn-sm" onclick="filterPremiumCards()">Filtrar</button><button class="btn btn-primary btn-sm" onclick="window.print()">Imprimir lote</button></div>';
+      var filter = '<div class="premium-panel p-4 mb-4 premium-card-filter suite-no-print"><input class="input" id="premiumCardSearch" placeholder="Buscar colaborador, CPF ou funcao" oninput="filterPremiumCards()"><select class="input" id="premiumCardStatus" onchange="filterPremiumCards()"><option value="">Todos os status</option><option value="apto">Aptos</option><option value="pendente">Pendentes</option></select><button class="btn btn-outline btn-sm" onclick="filterPremiumCards()">Filtrar</button><button class="btn btn-primary btn-sm" onclick="window.print()">Baixar PDFs</button></div>';
       setTimeout(filterPremiumCards, 120);
       return filter + html;
     };

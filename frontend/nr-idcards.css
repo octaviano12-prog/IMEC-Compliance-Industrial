@@ -815,7 +815,7 @@
     gap: 8mm;
   }
   .nr-wallet-set {
-    grid-template-columns: repeat(2, 86mm);
+    grid-template-columns: repeat(2, 105mm);
     justify-content: center;
     gap: 10mm;
     break-inside: avoid;
@@ -823,35 +823,34 @@
     margin: 0 0 8mm;
   }
   .nr-id-card {
-    width: 86mm;
-    min-height: 116mm;
+    width: 105mm;
+    min-height: 145mm;
     border-radius: 5mm;
     box-shadow: none;
   }
-  .nr-brand { transform: scale(.55); transform-origin: left top; padding-left: 6mm; padding-top: 5mm; }
+  .nr-brand { transform: none; transform-origin: left top; width: 36mm; min-height: 18mm; padding-left: 6mm; padding-top: 5mm; }
+  .nr-brand-logo { width: 36mm !important; max-width: 36mm !important; max-height: 18mm !important; }
+  .nr-back-logo { width: 28mm; right: 5mm; bottom: 18mm; }
   .nr-card-watermark { right: 4mm; bottom: 18mm; font-size: 30pt; }
   .nr-card-watermark.back { right: 4mm; bottom: 16mm; font-size: 20pt; }
   .nr-card-serial { right: 4mm; bottom: 3mm; max-width: 30mm; font-size: 4pt; }
-  .nr-title-ribbon { top: 6mm; width: 52mm; }
+  .nr-title-ribbon { top: 7mm; width: 62mm; }
   .nr-title-ribbon h3 { font-size: 11pt; padding: 4mm 2mm 2.5mm 7mm; }
   .nr-title-ribbon p { font-size: 7pt; padding: 2mm 2mm 2.5mm 7mm; }
-  .nr-front-main { grid-template-columns: 29mm 1fr; gap: 4mm; padding: 29mm 6mm 0; }
-  .nr-photo, .nr-photo-empty { width: 25mm; height: 32mm; border-radius: 3mm; font-size: 16pt; }
-  .nr-qr { width: 24mm; height: 24mm; border-width: 1mm; }
-  .nr-qr canvas, .nr-qr img { width: 21mm !important; height: 21mm !important; }
-  .nr-verify-caption { width: 25mm; padding: 1mm; border-radius: 2mm; }
+  .nr-front-main { grid-template-columns: 32mm 1fr; gap: 5mm; padding: 28mm 7mm 0; }
+  .nr-left-column { gap: 2mm; position: relative; z-index: 4; }
+  .nr-photo, .nr-photo-empty { width: 28mm; height: 32mm; border-radius: 3mm; font-size: 15pt; }
+  .nr-qr { width: 22mm; height: 22mm; border-width: .8mm; }
+  .nr-qr canvas, .nr-qr img { width: 19mm !important; height: 19mm !important; }
+  .nr-verify-caption { display: none !important; }
   .nr-verify-caption b { font-size: 4.4pt; }
   .nr-verify-caption small { font-size: 4pt; }
   .nr-row { grid-template-columns: 17mm 1fr; min-height: 6.2mm; gap: 1.5mm; }
   .nr-row span { font-size: 5.8pt; }
-  .nr-row strong { font-size: 7.5pt; }
-  .nr-code-strip { margin: 2mm 6mm 0 36mm; padding: 1.5mm 2mm; border-radius: 2mm; }
-  .nr-code-strip span { font-size: 4.5pt; }
-  .nr-code-strip strong { font-size: 5.2pt; }
-  .nr-apto { width: 34mm; margin: 2mm 0 0 38mm; padding: 1.5mm 2mm; border-width: .8mm; border-radius: 3mm; font-size: 15pt; }
-  .nr-apto span { width: 9mm; height: 9mm; }
-  .nr-apto span::after { width: 4mm; height: 2mm; border-width: .8mm; }
-  .nr-equipment-band { min-height: 19mm; padding: 3.5mm 6mm; }
+  .nr-row strong { font-size: 7pt; line-height: 1.05; }
+  .nr-code-strip,
+  .nr-apto { display: none !important; }
+  .nr-equipment-band { min-height: 20mm; padding: 3.5mm 6mm; }
   .nr-equipment-band h4 { font-size: 7pt; }
   .nr-equipment-band ul { font-size: 6.5pt; margin-top: 1mm; }
   .nr-auth-list { gap: 1mm 3mm; }

@@ -211,13 +211,14 @@
     var cardCode = String(codeLabel || 'Sem certificado').slice(0, 18);
     var courseTitle = displayCourseTitle(trainingCode, trainingName);
     var logoSrc = window.IMEC_LOGO_SRC || 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22520%22%20height%3D%22190%22%20viewBox%3D%220%200%20520%20190%22%3E%3Cdefs%3E%3Cfilter%20id%3D%22s%22%20x%3D%22-20%25%22%20y%3D%22-20%25%22%20width%3D%22140%25%22%20height%3D%22140%25%22%3E%3CfeDropShadow%20dx%3D%223%22%20dy%3D%225%22%20stdDeviation%3D%223%22%20flood-color%3D%22%23001a58%22%20flood-opacity%3D%22.35%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M150%2028C215-8%20312%204%20364%2048%22%20fill%3D%22none%22%20stroke%3D%22%23ef1f28%22%20stroke-width%3D%2226%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M356%20142C286%20190%20171%20178%20110%20116%22%20fill%3D%22none%22%20stroke%3D%22%23ef1f28%22%20stroke-width%3D%2224%22%20stroke-linecap%3D%22round%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%22112%22%20font-family%3D%22Arial%20Black%2CArial%2Csans-serif%22%20font-size%3D%22102%22%20font-style%3D%22italic%22%20font-weight%3D%22900%22%20fill%3D%22%23153fd1%22%20filter%3D%22url(%23s)%22%3EI%3C%2Ftext%3E%3Ctext%20x%3D%2288%22%20y%3D%22112%22%20font-family%3D%22Arial%20Black%2CArial%2Csans-serif%22%20font-size%3D%22112%22%20font-style%3D%22italic%22%20font-weight%3D%22900%22%20fill%3D%22%23ee1730%22%20filter%3D%22url(%23s)%22%3EM%3C%2Ftext%3E%3Ctext%20x%3D%22212%22%20y%3D%22112%22%20font-family%3D%22Arial%20Black%2CArial%2Csans-serif%22%20font-size%3D%22102%22%20font-style%3D%22italic%22%20font-weight%3D%22900%22%20fill%3D%22%23153fd1%22%20filter%3D%22url(%23s)%22%3EEC%3C%2Ftext%3E%3Ctext%20x%3D%2274%22%20y%3D%22172%22%20font-family%3D%22Arial%20Black%2CArial%2Csans-serif%22%20font-size%3D%2248%22%20font-style%3D%22italic%22%20font-weight%3D%22900%22%20letter-spacing%3D%224%22%20fill%3D%22%231746e8%22%3EMETALURGICA%3C%2Ftext%3E%3C%2Fsvg%3E';
+    logoSrc = window.IMEC_LOGO_SRC || '/assets/imec-metalurgica-logo.webp';
 
     return '<section class="nr-wallet-set" id="nr-set-' + employee.id + '">' +
       '<div class="nr-id-wrap">' +
         '<article class="nr-id-card nr-front-card">' +
           '<div class="nr-card-watermark">NR</div>' +
           '<div class="nr-card-serial">' + esc(trainingCode) + ' - ' + esc(cardCode) + '</div>' +
-          '<div class="nr-brand"><img class="nr-brand-logo" style="display:block;width:220px;height:auto;max-height:124px;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(7,27,58,.2))" src="' + logoSrc + '" alt="IMEC Metalurgica"></div>' +
+          '<div class="nr-brand"><img class="nr-brand-logo" src="' + logoSrc + '" alt="IMEC Metalurgica"></div>' +
           '<div class="nr-title-ribbon"><h3>Carteirinha ' + esc(trainingCode) + '</h3><p>' + esc(role) + '</p></div>' +
           '<div class="nr-front-main">' +
             '<div class="nr-left-column">' + photo + '<div class="nr-qr" data-nr-qr="' + esc(qr) + '"><span>QR</span></div><div class="nr-verify-caption"><b>Verifique a autenticidade</b><small>escaneando o QR Code</small></div></div>' +
@@ -247,6 +248,7 @@
         '<article class="nr-id-card nr-back-card">' +
           '<div class="nr-card-watermark back">IMEC</div>' +
           '<div class="nr-back-head"><div class="nr-head-icon"></div><h3>Informacoes do Treinamento</h3><div class="nr-status-pill ' + statusClass + '">' + statusText + '</div></div>' +
+          '<img class="nr-back-logo" src="' + logoSrc + '" alt="IMEC Metalurgica">' +
           '<div class="nr-back-redline"></div>' +
           '<div class="nr-back-body">' +
             '<div class="nr-training-line has-icon book"><span>Curso:</span><strong>' + esc(courseTitle) + '</strong></div>' +

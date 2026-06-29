@@ -111,19 +111,46 @@ CREATE TABLE medical_exams (
 -- ============================================
 -- EPI RECORDS
 -- ============================================
+CREATE TABLE epi_catalog (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(100),
+    ca_number VARCHAR(50),
+    manufacturer VARCHAR(255),
+    ca_validity DATE,
+    equipment_validity DATE,
+    current_stock INT DEFAULT 0,
+    minimum_stock INT DEFAULT 0,
+    notes TEXT,
+    status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 CREATE TABLE epi_records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT NOT NULL,
+    epi_catalog_id INT NULL,
     epi_name VARCHAR(255) NOT NULL,
     ca_number VARCHAR(50),
     quantity INT DEFAULT 1,
     delivery_date DATE NOT NULL,
     replacement_date DATE,
+    delivery_signature MEDIUMTEXT,
+    delivery_signature_method VARCHAR(50),
+    return_date DATE,
+    return_condition VARCHAR(50),
+    return_signature MEDIUMTEXT,
+    return_signature_method VARCHAR(50),
+    responsible_name VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'entregue',
+    return_notes TEXT,
     attachment_url MEDIUMTEXT,
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+    FOREIGN KEY (epi_catalog_id) REFERENCES epi_catalog(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ============================================

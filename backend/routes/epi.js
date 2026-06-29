@@ -6,14 +6,82 @@ const { authenticate, authorize } = require('../middleware/auth');
 router.get('/', authenticate, async (req, res) => {
   try {
     const [epis] = await db.query(`
-      SELECT ep.*, e.full_name as employee_name
+      SELECT ep.*, e.full_name as employee_name, e.cpf as employee_cpf, e.role_position, e.department,
+             cat.name as catalog_name, cat.type as catalog_type, cat.manufacturer,
+             cat.ca_validity, cat.equipment_validity, cat.current_stock, cat.minimum_stock
       FROM epi_records ep
       LEFT JOIN employees e ON ep.employee_id = e.id
+      LEFT JOIN epi_catalog cat ON ep.epi_catalog_id = cat.id
       ORDER BY ep.delivery_date DESC
     `);
     res.json(epis);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar EPIs' });
+  }
+});
+
+router.get('/catalog', authenticate, async (req, res) => {
+  try {
+    const [items] = await db.query('SELECT * FROM epi_catalog ORDER BY name');
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar catalogo de EPI' });
+  }
+});
+
+router.post('/catalog', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
+  try {
+    const { name, type, ca_number, manufacturer, ca_validity, equipment_validity, current_stock, minimum_stock, notes, status } = req.body;
+    const [result] = await db.query(
+      `INSERT INTO epi_catalog (name, type, ca_number, manufacturer, ca_validity, equipment_validity, current_stock, minimum_stock, notes, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, type || null, ca_number || null, manufacturer || null, ca_validity || null, equipment_validity || null, current_stock || 0, minimum_stock || 0, notes || null, status || 'ativo']
+    );
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao cadastrar EPI no catalogo' });
+  }
+});
+
+router.put('/catalog/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
+  try {
+    const { name, type, ca_number, manufacturer, ca_validity, equipment_validity, current_stock, minimum_stock, notes, status } = req.body;
+    await db.query(
+      `UPDATE epi_catalog SET name=?, type=?, ca_number=?, manufacturer=?, ca_validity=?, equipment_validity=?, current_stock=?, minimum_stock=?, notes=?, status=? WHERE id=?`,
+      [name, type || null, ca_number || null, manufacturer || null, ca_validity || null, equipment_validity || null, current_stock || 0, minimum_stock || 0, notes || null, status || 'ativo', req.params.id]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar EPI do catalogo' });
+  }
+});
+
+router.delete('/catalog/:id', authenticate, authorize('admin'), async (req, res) => {
+  try {
+    await db.query('DELETE FROM epi_catalog WHERE id = ?', [req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao excluir EPI do catalogo' });
+  }
+});
+
+router.get('/employee/:id/ficha', authenticate, async (req, res) => {
+  try {
+    const [[employee]] = await db.query('SELECT * FROM employees WHERE id = ?', [req.params.id]);
+    if (!employee) return res.status(404).json({ error: 'Funcionario nao encontrado' });
+    const [records] = await db.query(`
+      SELECT ep.*, cat.name as catalog_name, cat.type as catalog_type, cat.ca_validity, cat.equipment_validity,
+             cat.manufacturer
+      FROM epi_records ep
+      LEFT JOIN epi_catalog cat ON ep.epi_catalog_id = cat.id
+      WHERE ep.employee_id = ?
+      ORDER BY ep.delivery_date DESC, ep.id DESC
+    `, [req.params.id]);
+    const [[settings]] = await db.query('SELECT * FROM system_settings LIMIT 1');
+    res.json({ employee, records, settings: settings || {} });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar ficha de EPI' });
   }
 });
 
@@ -34,11 +102,24 @@ router.get('/:id', authenticate, async (req, res) => {
 
 router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { employee_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes } = req.body;
+    const { employee_id, epi_catalog_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes, delivery_signature, delivery_signature_method, responsible_name } = req.body;
+    let finalName = epi_name;
+    let finalCa = ca_number;
+    if (epi_catalog_id) {
+      const [[catalog]] = await db.query('SELECT * FROM epi_catalog WHERE id = ?', [epi_catalog_id]);
+      if (catalog) {
+        finalName = finalName || catalog.name;
+        finalCa = finalCa || catalog.ca_number;
+      }
+    }
     const [result] = await db.query(
-      'INSERT INTO epi_records (employee_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [employee_id, epi_name, ca_number, quantity || 1, delivery_date, replacement_date || null, attachment_url, notes]
+      `INSERT INTO epi_records (employee_id, epi_catalog_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes, delivery_signature, delivery_signature_method, responsible_name, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employee_id, epi_catalog_id || null, finalName, finalCa || null, quantity || 1, delivery_date, replacement_date || null, attachment_url || null, notes || null, delivery_signature || null, delivery_signature_method || null, responsible_name || null, 'entregue']
     );
+    if (epi_catalog_id) {
+      await db.query('UPDATE epi_catalog SET current_stock = GREATEST(COALESCE(current_stock, 0) - ?, 0) WHERE id = ?', [quantity || 1, epi_catalog_id]);
+    }
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'create', 'epi', result.insertId, `EPI cadastrado para funcionario ${employee_id}`]);
     res.status(201).json({ id: result.insertId });
@@ -50,16 +131,34 @@ router.post('/', authenticate, authorize('admin', 'rh', 'engenharia'), async (re
 
 router.put('/:id', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
   try {
-    const { employee_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes } = req.body;
+    const { employee_id, epi_catalog_id, epi_name, ca_number, quantity, delivery_date, replacement_date, attachment_url, notes, delivery_signature, delivery_signature_method, responsible_name, status } = req.body;
     await db.query(
-      'UPDATE epi_records SET employee_id=?, epi_name=?, ca_number=?, quantity=?, delivery_date=?, replacement_date=?, attachment_url=?, notes=? WHERE id=?',
-      [employee_id, epi_name, ca_number, quantity || 1, delivery_date, replacement_date || null, attachment_url, notes, req.params.id]
+      `UPDATE epi_records SET employee_id=?, epi_catalog_id=?, epi_name=?, ca_number=?, quantity=?, delivery_date=?, replacement_date=?, attachment_url=?, notes=?, delivery_signature=?, delivery_signature_method=?, responsible_name=?, status=? WHERE id=?`,
+      [employee_id, epi_catalog_id || null, epi_name, ca_number || null, quantity || 1, delivery_date, replacement_date || null, attachment_url || null, notes || null, delivery_signature || null, delivery_signature_method || null, responsible_name || null, status || 'entregue', req.params.id]
     );
     await db.query('INSERT INTO audit_logs (user_id, action, entity_type, entity_id, description) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, 'update', 'epi', req.params.id, `EPI ${req.params.id} atualizado`]);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao atualizar EPI' });
+  }
+});
+
+router.put('/:id/return', authenticate, authorize('admin', 'rh', 'engenharia'), async (req, res) => {
+  try {
+    const { return_date, return_condition, return_signature, return_signature_method, return_notes } = req.body;
+    const condition = return_condition || 'Bom';
+    const status = condition.toLowerCase().includes('extravi') ? 'extraviado'
+      : condition.toLowerCase().includes('danific') ? 'danificado'
+      : condition.toLowerCase().includes('substit') ? 'substituido'
+      : 'devolvido';
+    await db.query(
+      `UPDATE epi_records SET return_date=?, return_condition=?, return_signature=?, return_signature_method=?, return_notes=?, status=? WHERE id=?`,
+      [return_date, condition, return_signature || null, return_signature_method || null, return_notes || null, status, req.params.id]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao registrar devolucao de EPI' });
   }
 });
 

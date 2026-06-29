@@ -21,6 +21,32 @@ async function applyCompatibilityMigrations() {
     'ALTER TABLE certificates MODIFY card_image_url MEDIUMTEXT',
     'ALTER TABLE medical_exams MODIFY pdf_url MEDIUMTEXT',
     'ALTER TABLE epi_records MODIFY attachment_url MEDIUMTEXT',
+    `CREATE TABLE IF NOT EXISTS epi_catalog (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      type VARCHAR(100),
+      ca_number VARCHAR(50),
+      manufacturer VARCHAR(255),
+      ca_validity DATE,
+      equipment_validity DATE,
+      current_stock INT DEFAULT 0,
+      minimum_stock INT DEFAULT 0,
+      notes TEXT,
+      status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB`,
+    'ALTER TABLE epi_records ADD COLUMN epi_catalog_id INT NULL',
+    'ALTER TABLE epi_records ADD COLUMN delivery_signature MEDIUMTEXT',
+    'ALTER TABLE epi_records ADD COLUMN delivery_signature_method VARCHAR(50)',
+    'ALTER TABLE epi_records ADD COLUMN return_date DATE',
+    'ALTER TABLE epi_records ADD COLUMN return_condition VARCHAR(50)',
+    'ALTER TABLE epi_records ADD COLUMN return_signature MEDIUMTEXT',
+    'ALTER TABLE epi_records ADD COLUMN return_signature_method VARCHAR(50)',
+    'ALTER TABLE epi_records ADD COLUMN responsible_name VARCHAR(255)',
+    "ALTER TABLE epi_records ADD COLUMN status VARCHAR(50) DEFAULT 'entregue'",
+    'ALTER TABLE epi_records ADD COLUMN return_notes TEXT',
+    'ALTER TABLE epi_records ADD CONSTRAINT fk_epi_records_catalog FOREIGN KEY (epi_catalog_id) REFERENCES epi_catalog(id) ON DELETE SET NULL',
     'ALTER TABLE equipment_documents MODIFY file_url MEDIUMTEXT',
     'ALTER TABLE technical_documents MODIFY file_url MEDIUMTEXT',
     'ALTER TABLE users ADD COLUMN password_changed_at TIMESTAMP NULL',
@@ -37,8 +63,25 @@ async function applyCompatibilityMigrations() {
     'CREATE INDEX idx_medical_exams_employee ON medical_exams(employee_id)',
     'CREATE INDEX idx_medical_exams_expiration ON medical_exams(expiration_date)',
     'CREATE INDEX idx_epi_records_employee ON epi_records(employee_id)',
+    'CREATE INDEX idx_epi_records_catalog ON epi_records(epi_catalog_id)',
+    'CREATE INDEX idx_epi_catalog_stock ON epi_catalog(current_stock, minimum_stock)',
     'CREATE INDEX idx_equipment_documents_equipment ON equipment_documents(equipment_id)',
     'CREATE INDEX idx_technical_documents_project ON technical_documents(project_id)'
+  ];
+
+  const defaultEpis = [
+    ['Avental de raspa', 'Protecao corporal'],
+    ['Botina de seguranca', 'Calcado'],
+    ['Capacete', 'Protecao da cabeca'],
+    ['Carneira', 'Acessorio'],
+    ['Cinto de seguranca', 'Trabalho em altura'],
+    ['Creme de protecao', 'Protecao da pele'],
+    ['Luva de raspa', 'Protecao das maos'],
+    ['Mascara respiratoria', 'Protecao respiratoria'],
+    ['Oculos de protecao', 'Protecao ocular'],
+    ['Protetor auricular', 'Protecao auditiva'],
+    ['Uniforme', 'Vestimenta'],
+    ['Protetor facial', 'Protecao facial']
   ];
 
   for (const statement of statements) {
@@ -51,6 +94,17 @@ async function applyCompatibilityMigrations() {
       }
     }
   }
+
+  for (const [name, type] of defaultEpis) {
+    try {
+      await db.query(
+        'INSERT INTO epi_catalog (name, type, current_stock, minimum_stock) SELECT ?, ?, 0, 0 WHERE NOT EXISTS (SELECT 1 FROM epi_catalog WHERE name = ? LIMIT 1)',
+        [name, type, name]
+      );
+    } catch (err) {
+      console.warn('Catalogo padrao de EPI nao aplicado:', err.message);
+    }
+  }
 }
 
 function sendFrontendApp(req, res, next) {
@@ -59,7 +113,7 @@ function sendFrontendApp(req, res, next) {
 
     const enhancedHtml = html
       .replace('</head>', '<link rel="stylesheet" href="/pro-dashboard.css">\n<link rel="stylesheet" href="/pro-polish.css">\n</head>')
-      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n<link rel="stylesheet" href="/production-readiness.css">\n<script src="/production-readiness.js"></script>\n<link rel="stylesheet" href="/executive-control.css">\n<script src="/executive-control.js"></script>\n<link rel="stylesheet" href="/professional-suite.css">\n<script src="/professional-suite.js"></script>\n<link rel="stylesheet" href="/premium-improvements.css">\n<script src="/premium-improvements.js"></script>\n</body>');
+      .replace('</body>', '<script src="/pro-dashboard.js"></script>\n<script src="/pro-polish.js"></script>\n<link rel="stylesheet" href="/nr-idcards.css">\n<script src="/nr-idcards.js"></script>\n<script src="/site-fixes.js"></script>\n<link rel="stylesheet" href="/system-enhancements.css">\n<script src="/system-enhancements.js"></script>\n<link rel="stylesheet" href="/production-readiness.css">\n<script src="/production-readiness.js"></script>\n<link rel="stylesheet" href="/executive-control.css">\n<script src="/executive-control.js"></script>\n<link rel="stylesheet" href="/professional-suite.css">\n<script src="/professional-suite.js"></script>\n<link rel="stylesheet" href="/premium-improvements.css">\n<script src="/premium-improvements.js"></script>\n<link rel="stylesheet" href="/epi-control.css">\n<script src="/epi-control.js"></script>\n</body>');
 
     res.type('html').send(enhancedHtml);
   });

@@ -437,12 +437,103 @@
   function patchCardPrint() {
     if (typeof window.printEmployeeCard !== 'function' || window.printEmployeeCard.__suitePrint) return false;
     var original = window.printEmployeeCard;
+    function loadHtml2Canvas() {
+      if (window.html2canvas) return Promise.resolve(window.html2canvas);
+      if (window.__imecHtml2CanvasLoading) return window.__imecHtml2CanvasLoading;
+      window.__imecHtml2CanvasLoading = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+        script.async = true;
+        script.onload = function () { resolve(window.html2canvas); };
+        script.onerror = function () { reject(new Error('Falha ao carregar gerador de imagem.')); };
+        document.head.appendChild(script);
+      });
+      return window.__imecHtml2CanvasLoading;
+    }
+    function fileSafeName(value) {
+      return String(value || 'carteirinha-nr')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80) || 'carteirinha-nr';
+    }
+    function downloadDataUrl(dataUrl, filename) {
+      var a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+    function cloneCardForImage(set) {
+      var clone = set.cloneNode(true);
+      var originalCanvases = set.querySelectorAll('canvas');
+      var cloneCanvases = clone.querySelectorAll('canvas');
+      originalCanvases.forEach(function (canvas, index) {
+        var target = cloneCanvases[index];
+        if (!target) return;
+        try {
+          var img = document.createElement('img');
+          img.src = canvas.toDataURL('image/png');
+          img.width = canvas.width;
+          img.height = canvas.height;
+          img.style.width = target.style.width || '112px';
+          img.style.height = target.style.height || '112px';
+          target.replaceWith(img);
+        } catch (err) {}
+      });
+      clone.querySelectorAll('.nr-actions,.nr-side-label').forEach(function (node) { node.remove(); });
+      clone.querySelectorAll('.nr-id-wrap').forEach(function (node) {
+        node.style.display = 'block';
+      });
+      Object.assign(clone.style, {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 610px)',
+        gap: '32px',
+        alignItems: 'start',
+        justifyContent: 'center',
+        width: '1252px',
+        margin: '0',
+        padding: '32px',
+        background: '#f8fbff',
+        position: 'fixed',
+        left: '-20000px',
+        top: '0',
+        zIndex: '-1'
+      });
+      clone.querySelectorAll('.nr-id-card').forEach(function (card) {
+        card.style.width = '610px';
+        card.style.maxWidth = '610px';
+        card.style.margin = '0';
+        card.style.boxShadow = '0 22px 50px rgba(7,27,58,.16), 0 0 0 1px #cbd6e5';
+      });
+      return clone;
+    }
     window.printEmployeeCard = function (employeeId) {
       var set = document.getElementById('nr-set-' + employeeId);
       if (!set) return original.apply(this, arguments);
-      var w = window.open('', '_blank', 'width=1280,height=900');
-      w.document.write('<html><head><title>Carteirinha NR - PDF</title><link rel="stylesheet" href="/pro-dashboard.css"><link rel="stylesheet" href="/pro-polish.css"><link rel="stylesheet" href="/nr-idcards.css"><link rel="stylesheet" href="/professional-suite.css"><style>@page{size:A4 landscape;margin:8mm}html,body{width:281mm;min-height:194mm;background:#fff;padding:0;margin:0}.print-area{width:281mm;min-height:194mm;display:flex;align-items:center;justify-content:center}.nr-wallet-set{display:grid!important;grid-template-columns:repeat(2,105mm)!important;gap:10mm!important;align-items:start!important;justify-content:center!important;transform:none!important;margin:0!important}.nr-id-card{width:105mm!important;min-height:145mm!important;box-shadow:none!important}.nr-actions,.nr-side-label{display:none!important}</style></head><body><div class="print-area">' + set.outerHTML + '</div><script>setTimeout(function(){window.print();window.close()},650)</script></body></html>');
-      w.document.close();
+      var employeeName = (set.querySelector('.nr-row strong') || {}).textContent || employeeId;
+      var clone = cloneCardForImage(set);
+      document.body.appendChild(clone);
+      loadHtml2Canvas().then(function (html2canvas) {
+        return html2canvas(clone, {
+          backgroundColor: '#f8fbff',
+          scale: Math.min(2, window.devicePixelRatio || 1.5),
+          useCORS: true,
+          allowTaint: true,
+          logging: false
+        });
+      }).then(function (canvas) {
+        downloadDataUrl(canvas.toDataURL('image/png', 0.98), fileSafeName('carteirinha-' + employeeName) + '.png');
+        if (typeof showToast === 'function') showToast('Imagem da carteirinha baixada.', 'success');
+      }).catch(function () {
+        if (typeof showToast === 'function') showToast('Nao foi possivel gerar imagem. Abrindo PDF.', 'warning');
+        original.apply(window, [employeeId]);
+      }).finally(function () {
+        clone.remove();
+      });
     };
     window.printEmployeeCard.__suitePrint = true;
     return true;

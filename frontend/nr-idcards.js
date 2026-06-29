@@ -241,7 +241,7 @@
         '<div class="nr-actions">' +
           '<label class="btn btn-outline btn-sm"><input class="nr-photo-input" type="file" accept="image/*" onchange="saveEmployeeCardPhoto(\'' + employee.id + '\', this)">Adicionar foto</label>' +
           '<button class="btn btn-outline btn-sm" onclick="openCardVerification(\'' + token + '\')">Ver autenticidade</button>' +
-          '<button class="btn btn-primary btn-sm" onclick="printEmployeeCard(\'' + employee.id + '\')">Baixar PDF</button>' +
+          '<button class="btn btn-primary btn-sm" onclick="printEmployeeCard(\'' + employee.id + '\')">Baixar imagem</button>' +
         '</div>' +
       '</div>' +
       '<div class="nr-id-wrap">' +
@@ -269,7 +269,7 @@
     var employees = (getDB().employees || []).filter(function (employee) { return employee.status === 'ativo'; });
     var body = employees.length ? employees.map(cardSet).join('') : '<div class="pro-empty"><div><strong>Nenhum funcionario ativo</strong><p class="mt-1 text-sm">Cadastre um funcionario ativo para gerar a carteirinha.</p></div></div>';
     setTimeout(renderQrCodes, 80);
-    return '<div class="nr-card-toolbar"><div><h3 class="font-display text-xl font-extrabold text-slate-900">Carteirinhas NR frente e verso</h3><p class="text-sm text-slate-500">Modelo em PDF com foto, QR Code e codigo de verificacao. A leitura do QR abre a consulta publica de autenticidade.</p></div><button class="btn btn-outline btn-sm" onclick="window.print()">Baixar PDFs em lote</button></div><div class="nr-card-grid print-area">' + body + '</div>';
+    return '<div class="nr-card-toolbar"><div><h3 class="font-display text-xl font-extrabold text-slate-900">Carteirinhas NR frente e verso</h3><p class="text-sm text-slate-500">Modelo em imagem com foto, QR Code e codigo de verificacao. A leitura do QR abre a consulta publica de autenticidade.</p></div><button class="btn btn-outline btn-sm" onclick="window.print()">Baixar lote em PDF</button></div><div class="nr-card-grid print-area">' + body + '</div>';
   };
 
   function install() {

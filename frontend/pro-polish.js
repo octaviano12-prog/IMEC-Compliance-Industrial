@@ -190,7 +190,7 @@
       + '<div class="grid grid-cols-2 gap-3 mt-3"><div class="nr-field"><span>CPF</span><strong>' + formatCPF(emp.cpf || '') + '</strong></div><div class="nr-field"><span>RG</span><strong>' + (emp.rg || '-') + '</strong></div><div class="nr-field"><span>Admissao</span><strong>' + formatDate(emp.admission_date) + '</strong></div><div class="nr-field"><span>Menor validade</span><strong>' + (latest ? formatDate(latest.expiration_date) : '-') + '</strong></div></div>'
       + '<div class="nr-field"><span>Treinamentos NR validos</span><div class="nr-list">' + nrTags + '</div></div>'
       + '<div class="nr-card-footer"><p class="text-[10px] leading-tight text-slate-500 max-w-[260px]">Documento auxiliar de identificacao e controle. A comprovacao normativa deve ser feita pelo certificado/registro completo do treinamento.</p><div class="nr-qr" data-nr-qr="' + qrUrl + '"></div></div></div></article>'
-      + '<div class="nr-actions"><label class="btn btn-outline btn-sm"><input class="nr-photo-input" type="file" accept="image/*" onchange="saveEmployeeCardPhoto(\'' + emp.id + '\', this)">Adicionar foto</label><button class="btn btn-primary btn-sm" onclick="printEmployeeCard(\'' + emp.id + '\')">Baixar PDF</button></div>';
+      + '<div class="nr-actions"><label class="btn btn-outline btn-sm"><input class="nr-photo-input" type="file" accept="image/*" onchange="saveEmployeeCardPhoto(\'' + emp.id + '\', this)">Adicionar foto</label><button class="btn btn-primary btn-sm" onclick="printEmployeeCard(\'' + emp.id + '\')">Baixar imagem</button></div>';
   }
 
   function boot() {

@@ -479,10 +479,6 @@
 
   function patchReportsTools() {
     if (typeof renderers === 'undefined' || !renderers.reports || renderers.reports.__suiteTools) return false;
-    var originalReports = renderers.reports;
-    renderers.reports = async function () {
-      return '<div class="suite-action-bar suite-no-print"><div><strong class="text-imec-dark">Pacote de entrega</strong><p class="text-xs text-slate-500">Gere auditoria, backup e relatorios em PDF para o cliente.</p></div><div class="suite-action-group"><button class="btn btn-outline btn-sm" onclick="openAuditBoard()">Painel de auditoria</button><button class="btn btn-outline btn-sm" onclick="openAttachmentVault()">Central de anexos</button><button class="btn btn-outline btn-sm" onclick="exportBackupJSON()">Backup JSON</button></div></div>' + await originalReports.apply(this, arguments);
-    };
     renderers.reports.__suiteTools = true;
     return true;
   }

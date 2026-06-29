@@ -227,10 +227,6 @@
 
   function patchReports() {
     if (typeof renderers === 'undefined' || !renderers.reports || renderers.reports.__premium) return false;
-    var original = renderers.reports;
-    renderers.reports = async function () {
-      return premiumReportsStrip() + await original.apply(this, arguments);
-    };
     renderers.reports.__premium = true;
     return true;
   }

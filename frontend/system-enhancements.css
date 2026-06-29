@@ -177,9 +177,10 @@
 }
 
 .verify-public-shell {
-  max-width: 980px;
+  width: 100%;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 0;
 }
 
 .verify-public-card {
@@ -230,9 +231,11 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  min-width: 0;
 }
 
 .verify-field {
+  min-width: 0;
   padding: 14px;
   border-radius: 16px;
   background: #f8fafc;
@@ -251,7 +254,8 @@
   display: block;
   margin-top: 5px;
   color: #0f172a;
-  word-break: break-word;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .verify-qr-box {
@@ -313,6 +317,23 @@
   .profile-grid,
   .verify-fields {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .verify-public-shell {
+    padding: 0;
+  }
+
+  .verify-public-header,
+  .verify-body {
+    padding: 18px;
+  }
+
+  .verify-seal {
+    min-width: 96px;
+    min-height: 96px;
+    font-size: 14px;
   }
 }
 

@@ -199,7 +199,18 @@
   background: #eff6ff;
 }
 
+.public-page-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.public-page-wrap #publicConsultForm {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
 .exec-public-shell {
+  width: 100%;
   max-width: 1040px;
   margin: 0 auto;
 }
@@ -249,9 +260,11 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  min-width: 0;
 }
 
 .exec-public-field {
+  min-width: 0;
   padding: 13px;
   border-radius: 14px;
   background: #f8fbff;
@@ -271,6 +284,8 @@
   margin-top: 5px;
   color: #08284d;
   font-size: 14px;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .exec-public-qr {
@@ -334,6 +349,26 @@
 }
 
 @media (max-width: 700px) {
+  .public-page-wrap {
+    max-width: 100%;
+  }
+
+  .exec-public-head {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .exec-public-seal {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+    font-size: 12px;
+  }
+
+  .exec-public-body {
+    padding: 18px;
+  }
+
   .exec-public-fields,
   .exec-kpis {
     grid-template-columns: 1fr;

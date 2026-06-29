@@ -181,7 +181,7 @@
     var settings = db.settings || {};
     var certs = validCertificatesFor(emp.id);
     var latest = certs.slice().sort(function (a, b) { return new Date(a.expiration_date) - new Date(b.expiration_date); })[0];
-    var qrUrl = latest && latest.verification_token ? (window.location.origin + window.location.pathname + '#/verificar/' + latest.verification_token) : window.location.href;
+    var qrUrl = latest && latest.verification_token ? (window.location.origin + '/verificar/' + encodeURIComponent(latest.verification_token)) : window.location.href;
     var nrTags = certs.slice(0, 8).map(function (cert) { return '<span>' + (cert.training_code || 'NR') + '</span>'; }).join('') || '<span>Sem NR valida</span>';
     var photo = emp.photo_url ? '<img class="nr-photo" src="' + emp.photo_url + '" alt="Foto de ' + emp.full_name + '">' : '<div class="nr-photo-empty">' + initials(emp.full_name) + '</div>';
     return '<article class="nr-id-card" id="nr-card-' + emp.id + '">'

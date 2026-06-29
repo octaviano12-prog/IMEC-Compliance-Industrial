@@ -349,7 +349,7 @@
         if (!cert) throw new Error('not-found');
         var st = cert.status === 'cancelado' ? 'cancelado' : calc(cert.expiration_date);
         var tone = st === 'valido' ? '#16a34a' : (st === 'vencendo' ? '#f59e0b' : '#dc2626');
-        var verifyLink = location.origin + location.pathname + '#/verificar/' + token;
+        var verifyLink = location.origin + '/verificar/' + encodeURIComponent(token);
         result.innerHTML = '<div class="exec-public-shell"><article class="exec-public-proof"><header class="exec-public-head"><div><p class="text-xs font-black uppercase tracking-widest text-blue-200">Consulta publica de autenticidade</p><h2>' + esc(label(st)) + '</h2><p class="mt-2 text-blue-100">Registro localizado na base oficial do sistema IMEC.</p></div><div class="exec-public-seal" style="background:' + tone + '">QR<br>VALIDADO</div></header><div class="exec-public-body"><div class="exec-public-fields">'
           + '<div class="exec-public-field"><span>Funcionario</span><b>' + esc(cert.employee_name || '-') + '</b></div>'
           + '<div class="exec-public-field"><span>CPF</span><b>' + esc(cert.employee_cpf_masked || '-') + '</b></div>'

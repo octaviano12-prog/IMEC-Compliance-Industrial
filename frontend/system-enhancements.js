@@ -249,7 +249,7 @@
         if (!cert) throw new Error('not-found');
         var st = cert.status === 'cancelado' ? 'cancelado' : calc(cert.expiration_date);
         var tone = st === 'valido' ? '#16a34a' : (st === 'vencendo' ? '#f59e0b' : '#dc2626');
-        var verifyLink = location.origin + '/#/verificar/' + token;
+        var verifyLink = location.origin + '/verificar/' + encodeURIComponent(token);
         result.innerHTML = '<div class="verify-public-shell"><article class="verify-public-card">'
           + '<header class="verify-public-header"><div><p class="text-sm font-black uppercase tracking-widest opacity-80">IMEC Compliance Industrial</p><h2>' + esc(statusName(st)) + '</h2><p class="mt-3 text-blue-100">Consulta publica de autenticidade do certificado.</p></div><div class="verify-seal" style="background:' + tone + '">CERTIFICADO<br>' + esc(statusName(st)).toUpperCase() + '</div></header>'
           + '<div class="verify-body"><div class="verify-fields">'

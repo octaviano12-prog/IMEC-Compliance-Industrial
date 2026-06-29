@@ -21,7 +21,8 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // GET single certificate
-router.get('/:id', authenticate, async (req, res) => {
+// Restrict to numeric IDs so public /verify/:token and /consult/:code stay public.
+router.get('/:id(\\d+)', authenticate, async (req, res) => {
   try {
     const [certs] = await db.query(`
       SELECT c.*, e.full_name as employee_name, t.name as training_name, t.code as training_code

@@ -172,7 +172,7 @@
   }
 
   function verificationUrl(cert) {
-    return cert && cert.verification_token ? (location.origin + location.pathname + '#/verificar/' + cert.verification_token) : location.origin + location.pathname + '#/verificar';
+    return cert && cert.verification_token ? (location.origin + '/verificar/' + encodeURIComponent(cert.verification_token)) : location.origin + '/verificar';
   }
 
   function displayCourseTitle(code, name) {
